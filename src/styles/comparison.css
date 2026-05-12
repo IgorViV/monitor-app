@@ -1,0 +1,112 @@
+/* Цветовое выделение для изменений */
+.text-increase,
+.comparison-increase {
+    color: var(--increase-color) !important;
+    font-weight: 600;
+}
+
+.text-decrease,
+.comparison-decrease {
+    color: var(--decrease-color) !important;
+    font-weight: 600;
+}
+
+.text-unchanged,
+.comparison-unchanged {
+    color: inherit;
+}
+
+.text-new,
+.comparison-new {
+    color: var(--increase-color) !important;
+    font-weight: 700;
+    background-color: rgba(220, 53, 69, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.text-removed,
+.comparison-removed {
+    color: var(--decrease-color) !important;
+    text-decoration: line-through;
+    font-style: italic;
+}
+
+/* Анимация для новых элементов */
+@keyframes highlightNew {
+    0% {
+        background-color: var(--new-item-bg);
+        transform: scale(1.02);
+    }
+    50% {
+        background-color: rgba(255, 243, 205, 0.5);
+    }
+    100% {
+        background-color: transparent;
+        transform: scale(1);
+    }
+}
+
+@keyframes highlightRemoved {
+    0% {
+        background-color: var(--removed-item-bg);
+        opacity: 0.8;
+    }
+    100% {
+        background-color: transparent;
+        opacity: 1;
+    }
+}
+
+tr.new-item {
+    animation: highlightNew 1.5s ease-out;
+}
+
+tr.removed-item {
+    animation: highlightRemoved 1.5s ease-out;
+}
+
+/* Пульсация для критических увеличений */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
+
+.critical-increase {
+    animation: pulse 2s infinite;
+    border-left: 3px solid var(--danger-color);
+}
+
+/* Иконки трендов */
+.trend-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.trend-up::before {
+    content: '▲';
+    color: var(--increase-color);
+    font-size: 0.8rem;
+}
+
+.trend-down::before {
+    content: '▼';
+    color: var(--decrease-color);
+    font-size: 0.8rem;
+}
+
+.trend-stable::before {
+    content: '■';
+    color: var(--muted-color);
+    font-size: 0.8rem;
+}

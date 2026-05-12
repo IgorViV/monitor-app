@@ -1,0 +1,87 @@
+@import 'comparison.css';
+@import 'tables.css';
+@import 'components.css';
+@import 'notifications.css';
+@import 'responsive.css';
+
+/* Обычное начертание (Regular) */
+@font-face {
+    font-family: 'Roboto Condensed';
+    font-style: normal;
+    font-weight: 400;
+    src: url('public/fonts/RobotoCondensed-Regular.ttf') format('truetype');
+}
+
+/* Жирное начертание (Bold) */
+@font-face {
+    font-family: 'Roboto Condensed';
+    font-style: normal;
+    font-weight: 700;
+    src: url('public/fonts/RobotoCondensed-Bold.ttf') format('truetype');
+}
+
+:root {
+    --danger-color: #dc3545;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --info-color: #0dcaf0;
+    --primary-color: #0d6efd;
+    --muted-color: #6c757d;
+    --increase-color: #dc3545;
+    --decrease-color: #198754;
+    --new-item-bg: #fff3cd;
+    --removed-item-bg: #d1e7dd;
+}
+
+/* Базовые стили */
+body {
+    font-family: 'Roboto Condensed', sans-serif;
+    background-color: #f8f9fa;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+/* Стили для плейсхолдеров */
+.form-control::placeholder {
+    color: grey;
+    font-style: italic;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.form-control:focus::placeholder {
+    opacity: 0.3;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Заголовок */
+#page-title {
+    color: #2c3e50;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Футер */
+.footer-info {
+    color: grey;
+    font-size: 0.85rem;
+}
+
+/* Утилитарные классы */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.user-select-none {
+    user-select: none;
+}
+
+.transition-all {
+    transition: all 0.3s ease;
+}

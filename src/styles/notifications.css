@@ -1,0 +1,65 @@
+/* Контейнер для уведомлений */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1060;
+}
+
+/* Алерты */
+.alert {
+    border: none;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.alert-info {
+    background-color: #e7f3ff;
+    color: #004085;
+    border-left: 4px solid #0d6efd;
+}
+
+.alert-warning {
+    background-color: #fff9e6;
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+
+.alert-success {
+    background-color: #e8f5e9;
+    color: #1b5e20;
+    border-left: 4px solid #4caf50;
+}
+
+.alert-danger {
+    background-color: #ffebee;
+    color: #b71c1c;
+    border-left: 4px solid #f44336;
+}
+
+/* Прогресс бар для загрузки */
+.progress {
+    height: 4px;
+    border-radius: 2px;
+    background-color: #e9ecef;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    animation: progressAnimation 1.5s ease-in-out infinite;
+}
+
+@keyframes progressAnimation {
+    0% {
+        width: 0%;
+    }
+    50% {
+        width: 70%;
+    }
+    100% {
+        width: 100%;
+    }
+}

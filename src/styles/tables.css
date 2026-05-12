@@ -1,0 +1,106 @@
+/* Обертка для таблиц с прокруткой */
+.table-wrapper {
+    overflow-x: auto;
+    max-height: 70vh;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Основная таблица сравнения */
+.comparison-table {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.comparison-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 10;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 700;
+    color: #495057;
+}
+
+/* Стили для строк федеральных округов */
+.comparison-table .table-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+.comparison-table .table-primary td {
+    color: white !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Стили для строк регионов */
+.comparison-table .table-secondary {
+    background-color: #e9ecef !important;
+    border-left: 4px solid #6c757d;
+}
+
+.comparison-table .table-secondary td {
+    font-weight: 600;
+    color: #495057;
+    padding-left: 2rem !important;
+}
+
+/* Стили для итоговых строк */
+.comparison-table .table-info {
+    background-color: #f1f8ff !important;
+    border-top: 2px solid #b6d4fe !important;
+    font-style: italic;
+}
+
+.comparison-table .table-info td:first-child {
+    text-align: right;
+    padding-right: 1rem;
+}
+
+/* Отступы для вложенных элементов */
+.comparison-table td:first-child {
+    padding-left: 1.5rem;
+}
+
+.comparison-table .table-secondary + tr td:first-child {
+    padding-left: 2.5rem;
+}
+
+/* Ховер эффект для строк данных */
+.comparison-table tbody tr:hover:not(.table-primary):not(.table-secondary):not(.table-info) {
+    background-color: rgba(13, 110, 253, 0.05);
+    cursor: default;
+}
+
+/* Бейджи статусов */
+.status-badge {
+    display: inline-block;
+    padding: 0.25em 0.6em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+    margin-left: 0.5rem;
+}
+
+.badge-new {
+    background-color: var(--increase-color);
+    color: white;
+}
+
+.badge-resolved {
+    background-color: var(--decrease-color);
+    color: white;
+}
+
+.badge-critical {
+    background-color: #ff6b6b;
+    color: white;
+    animation: pulse 2s infinite;
+}

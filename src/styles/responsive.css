@@ -1,0 +1,88 @@
+/* Адаптивные стили */
+@media (max-width: 768px) {
+    .comparison-table {
+        font-size: 0.8rem;
+    }
+
+    .comparison-table .table-primary {
+        font-size: 0.9rem;
+    }
+
+    .nav-tabs .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .modal-preview .modal-dialog {
+        max-width: 100%;
+        margin: 0.5rem;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .d-flex.gap-1 {
+        flex-direction: column;
+    }
+
+    .summary-card {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    h1 .h4 {
+        font-size: 1rem;
+    }
+
+    .container {
+        padding: 0.5rem;
+    }
+
+    .table-wrapper {
+        max-height: 50vh;
+    }
+
+    .comparison-table td:first-child {
+        padding-left: 0.5rem;
+    }
+
+    .comparison-table .table-secondary + tr td:first-child {
+        padding-left: 1rem;
+    }
+}
+
+/* Поддержка печати */
+@media print {
+    .btn,
+    .nav-tabs,
+    .form-control,
+    footer {
+        display: none !important;
+    }
+
+    .comparison-table {
+        font-size: 10pt;
+    }
+
+    .text-increase,
+    .text-decrease {
+        font-weight: bold;
+    }
+
+    .text-increase {
+        color: #000 !important;
+        border-bottom: 2px solid #000;
+    }
+
+    .text-decrease {
+        color: #000 !important;
+        border-bottom: 2px dashed #000;
+    }
+
+    @page {
+        margin: 1cm;
+    }
+}

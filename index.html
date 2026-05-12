@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="RU">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Монитор</title>
+  </head>
+  <body>
+    <div class="container d-flex flex-column min-vh-100">
+      <header>
+        <h1 class="row text-center">
+          <span class="h4" id="page-title">
+            Монитор паводковой и пожарной обстановки
+          </span>
+        </h1>
+      </header>
+      <main class="flex-fill">
+        <form action="#" name="formDate">
+          <div class="mx-auto mb-3" style="max-width: 720px;">
+            <div class="row">
+              <div class="col">
+                <label for="nextDate" class="form-label h6">Текущая дата</label>
+                <input class="form-control" type="date" id="nextDate" aria-label="Конец периода" required>
+              </div>
+              <div class="col">
+                <label for="prevDate" class="form-label h6">Предыдущая дата</label>
+                <input class="form-control" type="date" id="prevDate" aria-label="Начала периода" required>
+              </div>
+            </div>
+          </div>
+        </form>
+        <form class="mb-3" action="#" name="mainForm">
+          <div>
+            <div class="row">
+              <h3 class="h6">Паводок</h3>
+              <div class="col d-flex flex-column mb-3">
+                <label for="textareaFlood" class="form-label visually-hidden">Паводок текущий</label>
+                <textarea class="form-control mb-2" id="textareaFlood" rows="3" placeholder="Введите данные о паводке..."></textarea>
+                <button class="btn btn-outline-secondary btn-sm ms-auto" type="button" data-clear-target="textareaFlood">Очистить</button>
+              </div>
+              <div class="col d-flex flex-column mb-3">
+                <label for="textareaFloodPrev" class="form-label visually-hidden">Паводок предыдущий</label>
+                <textarea class="form-control mb-2" id="textareaFloodPrev" rows="3" placeholder="Данные за предыдущий период..."></textarea>
+                <button class="btn btn-outline-secondary btn-sm ms-auto" type="button" data-clear-target="textareaFloodPrev">Очистить</button>
+              </div>
+            </div>
+            <div class="row">
+              <h3 class="h6">Природные пожары</h3>
+              <div class="col d-flex flex-column mb-3">
+                <label for="textareaFire" class="form-label visually-hidden">Природные пожары текущие</label>
+                <textarea class="form-control mb-2" id="textareaFire" rows="3" placeholder="Введите данные о пожарах..."></textarea>
+                <button class="btn btn-outline-secondary btn-sm ms-auto" type="button" data-clear-target="textareaFire">Очистить</button>
+              </div>
+              <div class="col d-flex flex-column mb-3">
+                <label for="textareaFirePrev" class="form-label visually-hidden">Природные пожары предыдущие</label>
+                <textarea class="form-control mb-2" id="textareaFirePrev" rows="3" placeholder="Данные за предыдущий период..."></textarea>
+                <button class="btn btn-outline-secondary btn-sm ms-auto" type="button" data-clear-target="textareaFirePrev">Очистить</button>
+              </div>
+            </div>
+            <div class="d-flex flex-column mb-3">
+              <h3 class="h6">Штормовые предупреждения</h3>
+              <label for="textareaStorm" class="form-label visually-hidden">Штормовые предупреждения</label>
+              <textarea class="form-control mb-2" id="textareaStorm" rows="3" placeholder="Введите данные о штормовых предупреждениях..."></textarea>
+              <button class="btn btn-outline-secondary btn-sm ms-auto" type="button" data-clear-target="textareaStorm">Очистить</button>
+            </div>
+          </div>
+          <div class="d-flex flex-row gap-1">
+            <button class="btn btn-primary" type="button" id="btn-make-monitor">Подготовить монитор</button>
+            <button class="btn btn-secondary btn-sm" type="reset" id="btn-reset-monitor">Очистить всю форму</button>
+            <button class="btn btn-outline-primary btn-sm ms-auto" type="button" id="btn-preview">Предпросмотр данных</button>
+          </div>
+        </form>
+      </main>
+      <footer class="p-2 border-top">
+        <small class="footer-info">
+          © iupgrader, 2026
+        </small>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
