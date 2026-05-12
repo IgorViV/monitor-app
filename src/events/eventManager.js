@@ -268,6 +268,10 @@ export class EventManager {
                 return;
             }
 
+            // Сохраняем даты
+            const currentDate = this.elements.nextDate?.value || '';
+            const previousDate = this.elements.prevDate?.value || '';
+
             // Собираем данные
             const floodText = this.elements.textareaFlood?.value || '';
             const floodPrevText = this.elements.textareaFloodPrev?.value || '';
@@ -298,6 +302,9 @@ export class EventManager {
                 return;
             }
 
+            // Устанавливаем даты в приложение
+            this.app.setDates(currentDate, previousDate);
+
             // Генерируем и отображаем отчет
             await this.app.renderReport(this.elements.reportContainer);
 
@@ -322,6 +329,23 @@ export class EventManager {
                 }, 100);
             }
 
+            const summaryContainer = document.getElementById('summary-container') || this.createSummaryContainer();
+            const summaries = this.app.getSummary();
+
+            summaryContainer.innerHTML = '';
+            summaries.forEach(summary => {
+                const summaryElement = document.createElement('div');
+                summaryElement.className = 'summary-block';
+                summaryElement.innerHTML = summary.html;
+                summaryContainer.appendChild(summaryElement);
+            });
+
+            // Вставляем сводку перед отчетом
+            const reportContainer = this.elements.reportContainer;
+            if (reportContainer && summaryContainer) {
+                reportContainer.insertBefore(summaryContainer, reportContainer.firstChild);
+            }
+
             // Сохраняем данные в localStorage
             this.saveToLocalStorage();
 
@@ -333,6 +357,13 @@ export class EventManager {
         } finally {
             this.showLoading(false);
         }
+    }
+
+    createSummaryContainer() {
+        const container = document.createElement('div');
+        container.id = 'summary-container';
+        container.className = 'summary-container mb-4';
+        return container;
     }
 
     /**

@@ -1,6 +1,7 @@
 import { parseFloodData } from './parser/floodParser';
 import { compareData, mergeComparisonResults } from './comparison/dataComparator';
 import { generateFullReport } from './renderer/tableRenderer';
+import { generateFullSummary } from './summary/summaryGenerator';
 
 export class MonitorApp {
     constructor() {
@@ -13,6 +14,33 @@ export class MonitorApp {
     reset() {
         this.currentData = { flood: null, fire: null, storm: null };
         this.previousData = { flood: null, fire: null, storm: null };
+        this.currentDate = '';
+        this.previousDate = '';
+    }
+
+    /**
+     * Устанавливает даты периодов
+     */
+    setDates(currentDate, previousDate) {
+        this.currentDate = currentDate || '';
+        this.previousDate = previousDate || '';
+    }
+
+    /**
+     * Получает отформатированную предыдущую дату
+     */
+    getFormattedPreviousDate() {
+        if (!this.previousDate) return '';
+
+        try {
+            const date = new Date(this.previousDate);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}.${month}.${year}`;
+        } catch (error) {
+            return this.previousDate;
+        }
     }
 
     /**
@@ -81,5 +109,26 @@ export class MonitorApp {
 
         const report = this.generateReport();
         generateFullReport(container, report);
+    }
+
+    /**
+     * Получить текстовую сводку
+     */
+    getSummary() {
+        return generateFullSummary(
+            this.currentData.flood,
+            this.currentData.fire,
+            this.currentData.storm,
+            this.previousData,
+            this.getFormattedPreviousDate() // Передаем дату
+        );
+    }
+
+    /**
+     * Получить HTML сводки
+     */
+    getSummaryHTML() {
+        const summaries = this.getSummary();
+        return summaries.map(s => s.html).join('');
     }
 }

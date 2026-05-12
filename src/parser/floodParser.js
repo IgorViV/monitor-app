@@ -1,4 +1,4 @@
-import { parseNumber, getFederalDistrict, normalizeText, parseLine, PATTERNS, BIG_FILIALS } from '../utils/textUtils.js';
+import { parseNumber, getFederalDistrict, normalizeText, parseLine, PATTERNS } from '../utils/textUtils.js';
 
 /**
  * Парсит одну строку с информацией о подтоплении

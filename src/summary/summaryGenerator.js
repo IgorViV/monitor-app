@@ -1,0 +1,512 @@
+import { getWordForm, formatNumber } from '../utils/textUtils';
+
+/**
+ * Склоняет название субъекта РФ в предложном падеже (на территории кого/чего)
+ */
+function getRegionPrepositional(regionName) {
+    const prepositionalMap = {
+        'Томская область': 'Томской области',
+        'Волгоградская область': 'Волгоградской области',
+        'Астраханская область': 'Астраханской области',
+        'Самарская область': 'Самарской области',
+        'Нижегородская область': 'Нижегородской области',
+        'Московская область': 'Московской области',
+        'Ленинградская область': 'Ленинградской области',
+        'Ростовская область': 'Ростовской области',
+        'Свердловская область': 'Свердловской области',
+        'Челябинская область': 'Челябинской области',
+        'Новосибирская область': 'Новосибирской области',
+        'Кемеровская область': 'Кемеровской области',
+        'Иркутская область': 'Иркутской области',
+        'Омская область': 'Омской области',
+        'Амурская область': 'Амурской области',
+        'Сахалинская область': 'Сахалинской области',
+        'Тюменская область': 'Тюменской области',
+        'Курганская область': 'Курганской области',
+        'Оренбургская область': 'Оренбургской области',
+        'Саратовская область': 'Саратовской области',
+        'Пензенская область': 'Пензенской области',
+        'Ульяновская область': 'Ульяновской области',
+        'Кировская область': 'Кировской области',
+        'Архангельская область': 'Архангельской области',
+        'Вологодская область': 'Вологодской области',
+        'Калининградская область': 'Калининградской области',
+        'Мурманская область': 'Мурманской области',
+        'Новгородская область': 'Новгородской области',
+        'Псковская область': 'Псковской области',
+        'Белгородская область': 'Белгородской области',
+        'Брянская область': 'Брянской области',
+        'Владимирская область': 'Владимирской области',
+        'Воронежская область': 'Воронежской области',
+        'Ивановская область': 'Ивановской области',
+        'Калужская область': 'Калужской области',
+        'Костромская область': 'Костромской области',
+        'Курская область': 'Курской области',
+        'Липецкая область': 'Липецкой области',
+        'Орловская область': 'Орловской области',
+        'Рязанская область': 'Рязанской области',
+        'Смоленская область': 'Смоленской области',
+        'Тамбовская область': 'Тамбовской области',
+        'Тверская область': 'Тверской области',
+        'Тульская область': 'Тульской области',
+        'Ярославская область': 'Ярославской области',
+        'Магаданская область': 'Магаданской области',
+        'Республика Мордовия': 'Республике Мордовия',
+        'Чувашская Республика': 'Чувашской Республике',
+        'Чувашская Республика - Чувашия': 'Чувашской Республике - Чувашии',
+        'Республика Татарстан': 'Республике Татарстан',
+        'Республика Башкортостан': 'Республике Башкортостан',
+        'Республика Дагестан': 'Республике Дагестан',
+        'Республика Ингушетия': 'Республике Ингушетия',
+        'Республика Коми': 'Республике Коми',
+        'Республика Карелия': 'Республике Карелия',
+        'Республика Бурятия': 'Республике Бурятия',
+        'Республика Тыва': 'Республике Тыва',
+        'Республика Хакасия': 'Республике Хакасия',
+        'Республика Алтай': 'Республике Алтай',
+        'Республика Саха (Якутия)': 'Республике Саха (Якутия)',
+        'Республика Крым': 'Республике Крым',
+        'Республика Адыгея': 'Республике Адыгея',
+        'Республика Калмыкия': 'Республике Калмыкия',
+        'Кабардино-Балкарская Республика': 'Кабардино-Балкарской Республике',
+        'Карачаево-Черкесская Республика': 'Карачаево-Черкесской Республике',
+        'Чеченская Республика': 'Чеченской Республике',
+        'Удмуртская Республика': 'Удмуртской Республике',
+        'Республика Марий Эл': 'Республике Марий Эл',
+        'Республика Северная Осетия-Алания': 'Республике Северной Осетии-Алании',
+        'Краснодарский край': 'Краснодарском крае',
+        'Ставропольский край': 'Ставропольском крае',
+        'Пермский край': 'Пермском крае',
+        'Приморский край': 'Приморском крае',
+        'Хабаровский край': 'Хабаровском крае',
+        'Алтайский край': 'Алтайском крае',
+        'Красноярский край': 'Красноярском крае',
+        'Забайкальский край': 'Забайкальском крае',
+        'Камчатский край': 'Камчатском крае',
+        'г. Севастополь': 'г. Севастополе',
+        'Еврейская автономная область': 'Еврейской автономной области',
+        'Чукотский автономный округ': 'Чукотском автономном округе',
+        'Ненецкий автономный округ': 'Ненецком автономном округе',
+        'Ямало-Ненецкий автономный округ': 'Ямало-Ненецком автономном округе',
+        'Ханты-Мансийский автономный округ - Югра': 'Ханты-Мансийском автономном округе - Югре',
+    };
+
+    if (prepositionalMap[regionName]) {
+        return prepositionalMap[regionName];
+    }
+
+    // Автоматическое склонение
+    if (regionName.endsWith('область')) {
+        return regionName.replace('область', 'области');
+    }
+    if (regionName.endsWith('край')) {
+        return regionName.replace('край', 'крае');
+    }
+    if (regionName.startsWith('Республика ')) {
+        const name = regionName.replace('Республика ', '');
+        return `Республике ${name}`;
+    }
+    if (regionName.endsWith('автономный округ')) {
+        return regionName.replace('автономный округ', 'автономном округе');
+    }
+    if (regionName.endsWith('автономная область')) {
+        return regionName.replace('автономная область', 'автономной области');
+    }
+
+    return regionName;
+}
+
+/**
+ * Склоняет название субъекта РФ в родительном падеже
+ */
+function getRegionGenitive(regionName) {
+    const genitiveMap = {
+        'Томская область': 'Томской',
+        'Волгоградская область': 'Волгоградской',
+        'Астраханская область': 'Астраханской',
+        'Самарская область': 'Самарской',
+        'Нижегородская область': 'Нижегородской',
+        'Республика Мордовия': 'Республики Мордовии',
+        'Чувашская Республика': 'Чувашской Республики',
+        'Чувашская Республика - Чувашия': 'Чувашской Республики - Чувашии',
+        'Республика Татарстан': 'Республики Татарстан',
+        'Московская область': 'Московской',
+        'Ленинградская область': 'Ленинградской',
+        'Ростовская область': 'Ростовской',
+        'Краснодарский край': 'Краснодарского края',
+        'Ставропольский край': 'Ставропольского края',
+        'Пермский край': 'Пермского края',
+        'Свердловская область': 'Свердловской',
+        'Челябинская область': 'Челябинской',
+        'Новосибирская область': 'Новосибирской',
+        'Кемеровская область': 'Кемеровской',
+        'Приморский край': 'Приморского края',
+        'Хабаровский край': 'Хабаровского края',
+        'Удмуртская Республика': 'Удмуртской Республики',
+        'Республика Башкортостан': 'Республики Башкортостан',
+        'Оренбургская область': 'Оренбургской',
+        'Саратовская область': 'Саратовской',
+        'Пензенская область': 'Пензенской',
+        'Ульяновская область': 'Ульяновской',
+        'Кировская область': 'Кировской',
+        'Республика Марий Эл': 'Республики Марий Эл',
+        'Республика Коми': 'Республики Коми',
+        'Архангельская область': 'Архангельской',
+        'Вологодская область': 'Вологодской',
+        'Калининградская область': 'Калининградской',
+        'Мурманская область': 'Мурманской',
+        'Республика Карелия': 'Республики Карелия',
+        'Новгородская область': 'Новгородской',
+        'Псковская область': 'Псковской',
+        'Белгородская область': 'Белгородской',
+        'Брянская область': 'Брянской',
+        'Владимирская область': 'Владимирской',
+        'Воронежская область': 'Воронежской',
+        'Ивановская область': 'Ивановской',
+        'Калужская область': 'Калужской',
+        'Костромская область': 'Костромской',
+        'Курская область': 'Курской',
+        'Липецкая область': 'Липецкой',
+        'Орловская область': 'Орловской',
+        'Рязанская область': 'Рязанской',
+        'Смоленская область': 'Смоленской',
+        'Тамбовская область': 'Тамбовской',
+        'Тверская область': 'Тверской',
+        'Тульская область': 'Тульской',
+        'Ярославская область': 'Ярославской',
+        'Республика Дагестан': 'Республики Дагестан',
+        'Республика Ингушетия': 'Республики Ингушетия',
+        'Кабардино-Балкарская Республика': 'Кабардино-Балкарской Республики',
+        'Карачаево-Черкесская Республика': 'Карачаево-Черкесской Республики',
+        'Республика Северная Осетия-Алания': 'Республики Северной Осетии-Алании',
+        'Чеченская Республика': 'Чеченской Республики',
+        'Республика Адыгея': 'Республики Адыгея',
+        'Республика Калмыкия': 'Республики Калмыкия',
+        'Республика Крым': 'Республики Крым',
+        'г. Севастополь': 'г. Севастополя',
+        'Тюменская область': 'Тюменской',
+        'Курганская область': 'Курганской',
+        'Иркутская область': 'Иркутской',
+        'Омская область': 'Омской',
+        'Республика Бурятия': 'Республики Бурятия',
+        'Республика Тыва': 'Республики Тыва',
+        'Республика Хакасия': 'Республики Хакасия',
+        'Алтайский край': 'Алтайского края',
+        'Республика Алтай': 'Республики Алтай',
+        'Красноярский край': 'Красноярского края',
+        'Забайкальский край': 'Забайкальского края',
+        'Амурская область': 'Амурской',
+        'Сахалинская область': 'Сахалинской',
+        'Еврейская автономная область': 'Еврейской автономной области',
+        'Камчатский край': 'Камчатского края',
+        'Магаданская область': 'Магаданской',
+        'Республика Саха (Якутия)': 'Республики Саха (Якутия)',
+        'Чукотский автономный округ': 'Чукотского автономного округа',
+        'Ненецкий автономный округ': 'Ненецкого автономного округа',
+        'Ямало-Ненецкий автономный округ': 'Ямало-Ненецкого автономного округа',
+        'Ханты-Мансийский автономный округ - Югра': 'Ханты-Мансийского автономного округа - Югры',
+    };
+
+    // Проверяем прямой маппинг
+    if (genitiveMap[regionName]) {
+        return genitiveMap[regionName];
+    }
+
+    // Автоматическое склонение для неизвестных регионов
+    if (regionName.endsWith('область')) {
+        return regionName.replace('область', 'области');
+    }
+    if (regionName.endsWith('край')) {
+        return regionName.replace('край', 'края');
+    }
+    if (regionName.startsWith('Республика ')) {
+        return regionName.replace('Республика ', 'Республики ');
+    }
+    if (regionName.endsWith('автономный округ')) {
+        return regionName.replace('автономный округ', 'автономного округа');
+    }
+
+    // Если ничего не подошло, возвращаем исходное название
+    return regionName;
+}
+
+/**
+ * Форматирует список регионов в родительном падеже
+ * @param {string[]} regionNamesList - массив названий регионов
+ * @returns {string} отформатированная строка
+ */
+function formatRegionsList(regionNamesList) {
+    if (!regionNamesList || regionNamesList.length === 0) {
+        return '';
+    }
+
+    if (regionNamesList.length === 1) {
+        return regionNamesList[0];
+    }
+
+    if (regionNamesList.length === 2) {
+        return `${regionNamesList[0]} и ${regionNamesList[1]}`;
+    }
+
+    // Для 3 и более: создаем копию массива чтобы не мутировать оригинал
+    const list = [...regionNamesList];
+    const lastRegion = list.pop();
+    return `${list.join(', ')} и ${lastRegion}`;
+}
+
+/**
+ * Определяет диапазон напряжений на основе всех данных
+ */
+function getVoltageRange(parsedData) {
+    let minVoltage = Infinity;
+    let maxVoltage = 0;
+    let unit = 'кВ';
+
+    // Обходим все данные для поиска min/max напряжения
+    Object.values(parsedData).forEach(district => {
+        Object.values(district).forEach(companies => {
+            companies.forEach(company => {
+                const range = company.voltageRange;
+                // Извлекаем все числа из строки напряжения
+                const numbers = range.match(/(\d+[,.]?\d*)/g);
+
+                if (numbers) {
+                    numbers.forEach(num => {
+                        const value = parseFloat(num.replace(',', '.'));
+                        if (!isNaN(value)) {
+                            minVoltage = Math.min(minVoltage, value);
+                            maxVoltage = Math.max(maxVoltage, value);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    // Если нет данных о напряжении
+    if (minVoltage === Infinity || maxVoltage === 0) {
+        return '';
+    }
+
+    if (minVoltage === maxVoltage) {
+        return `${maxVoltage} ${unit}`;
+    }
+
+    // Форматируем с запятой для десятых
+    const formatVoltage = (v) => {
+        return v % 1 === 0 ? v.toString() : v.toString().replace('.', ',');
+    };
+
+    return `${formatVoltage(minVoltage)}-${formatVoltage(maxVoltage)} ${unit}`;
+}
+
+/**
+ * Собирает уникальные регионы из данных
+ */
+function getUniqueRegions(parsedData) {
+    const regions = new Set();
+
+    Object.values(parsedData).forEach(district => {
+        Object.keys(district).forEach(region => {
+            regions.add(region);
+        });
+    });
+
+    return Array.from(regions).sort();
+}
+
+/**
+ * Генерирует суммарную информацию по подтоплениям
+ * @param {Object} parsedData - распарсенные данные (текущий период)
+ * @param {Object} previousParsedData - распарсенные данные (предыдущий период)
+ * @param {string} previousDate - дата предыдущего периода в формате ДД.ММ.ГГГГ
+ * @returns {Object} - объект с суммарной информацией и HTML разметкой
+ */
+export function generateFloodSummary(parsedData, previousParsedData = null, previousDate = '') {
+    if (!parsedData || Object.keys(parsedData).length === 0) {
+        return {
+            text: 'Нет данных о подтоплениях',
+            html: '<p class="text-muted">Нет данных о подтоплениях</p>',
+            stats: null,
+        };
+    }
+
+    // Подсчет текущих значений
+    let totalPoles = 0;
+    let totalLines = 0;
+
+    Object.values(parsedData).forEach(district => {
+        Object.values(district).forEach(companies => {
+            companies.forEach(company => {
+                totalPoles += company.totalPoles || 0;
+                totalLines += company.totalLines || 0;
+            });
+        });
+    });
+
+    // Подсчет предыдущих значений
+    let previousTotalPoles = 0;
+    let previousTotalLines = 0;
+
+    if (previousParsedData) {
+        Object.values(previousParsedData).forEach(district => {
+            Object.values(district).forEach(companies => {
+                companies.forEach(company => {
+                    previousTotalPoles += company.totalPoles || 0;
+                    previousTotalLines += company.totalLines || 0;
+                });
+            });
+        });
+    }
+
+    // Получаем диапазон напряжений
+    const voltageRange = getVoltageRange(parsedData);
+
+    // Получаем уникальные регионы
+    const regions = getUniqueRegions(parsedData);
+    const regionNamesList = regions.map(region => getRegionGenitive(region));
+
+    // Форматируем список регионов в зависимости от количества
+    let locationText;
+    if (regions.length === 1) {
+        const regionName = regions[0];
+        const regionPrepositional = getRegionPrepositional(regionName);
+        locationText = `на территории ${regionPrepositional}`;
+    } else {
+        const regionsText = formatRegionsList(regionNamesList);
+        locationText = `на территориях ${regions.length} субъектов России: ${regionsText}`;
+    }
+
+    // Форматируем числа
+    const formattedPoles = formatNumber(totalPoles);
+    const formattedPreviousPoles = formatNumber(previousTotalPoles);
+    const formattedLines = formatNumber(totalLines);
+    const formattedPreviousLines = formatNumber(previousTotalLines);
+
+    // Правильное склонение
+    const polesWord = getWordForm(totalPoles, 'опора');
+    const linesWord = 'ЛЭП';
+
+    // Определяем статус изменения для цвета
+    let polesChangeClass = 'color-black';
+    let linesChangeClass = 'color-black';
+
+    if (previousParsedData) {
+        if (totalPoles > previousTotalPoles) {
+            polesChangeClass = 'color-red';
+        } else if (totalPoles < previousTotalPoles) {
+            polesChangeClass = 'color-green';
+        }
+
+        if (totalLines > previousTotalLines) {
+            linesChangeClass = 'color-red';
+        } else if (totalLines < previousTotalLines) {
+            linesChangeClass = 'color-green';
+        }
+    }
+
+    // Формируем сноску с датой
+    let footnoteHTML = '';
+    let footnoteText = '';
+
+    if (previousDate) {
+        footnoteText = `*в скобках указана информация на ${previousDate}`;
+        footnoteHTML = `
+      <p class="summary-footnote">
+        <small class="text-muted">*в скобках указана информация на ${previousDate}</small>
+      </p>
+    `;
+    } else {
+        footnoteText = '*в скобках указана информация за предыдущий период';
+        footnoteHTML = `
+      <p class="summary-footnote">
+        <small class="text-muted">*в скобках указана информация за предыдущий период</small>
+      </p>
+    `;
+    }
+
+    // Генерируем HTML
+    const html = `
+    <div class="summary-block">
+      <p class="summary-text">
+        <strong>Паводок:</strong> 
+        подтоплены 
+        <span class="${polesChangeClass}">${formattedPoles}</span> 
+        (<span class="color-grey">${formattedPreviousPoles}</span>)* ${polesWord} 
+        <span class="${linesChangeClass}">${formattedLines}</span> 
+        (<span class="color-grey">${formattedPreviousLines}</span>)* ${linesWord} ${voltageRange} 
+        ${locationText}.
+      </p>
+      ${footnoteHTML}
+    </div>
+  `;
+
+    // Простой текст
+    const text = `Паводок: подтоплены ${formattedPoles} (${formattedPreviousPoles})* ${polesWord} ${formattedLines} (${formattedPreviousLines})* ${linesWord} ${voltageRange} ${locationText}. ${footnoteText}`;
+
+    return {
+        text,
+        html,
+        stats: {
+            totalPoles,
+            previousTotalPoles,
+            totalLines,
+            previousTotalLines,
+            voltageRange,
+            regionsCount: regions.length,
+            regions: regionNamesList,
+            polesWord,
+            locationText,
+            previousDate,
+        },
+    };
+}
+
+/**
+ * Генерирует сводку для всех типов происшествий
+ */
+export function generateFullSummary(floodData, fireData, stormData, previousData = {}, previousDate = '') {
+    const summaries = [];
+
+    if (floodData && Object.keys(floodData).length > 0) {
+        const floodSummary = generateFloodSummary(
+            floodData,
+            previousData.flood || null,
+            previousDate
+        );
+        summaries.push({
+            type: 'flood',
+            ...floodSummary,
+        });
+    }
+
+    // TODO: Добавить генерацию для пожаров и штормов
+    if (fireData && Object.keys(fireData).length > 0) {
+        summaries.push({
+            type: 'fire',
+            text: 'Сводка по пожарам (в разработке)',
+            html: '<div class="summary-block"><p class="summary-text"><strong>Пожары:</strong> сводка в разработке</p></div>',
+            stats: null,
+        });
+    }
+
+    if (stormData && Object.keys(stormData).length > 0) {
+        summaries.push({
+            type: 'storm',
+            text: 'Сводка по штормам (в разработке)',
+            html: '<div class="summary-block"><p class="summary-text"><strong>Штормы:</strong> сводка в разработке</p></div>',
+            stats: null,
+        });
+    }
+
+    return summaries;
+}
+
+//
+// Экспортируем для тестирования
+export {
+    getRegionGenitive,
+    formatRegionsList,
+    getVoltageRange,
+    getUniqueRegions,
+};
