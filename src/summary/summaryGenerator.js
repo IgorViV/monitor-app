@@ -1,7 +1,7 @@
 import { getWordForm, formatNumber } from '../utils/textUtils';
 
 /**
- * Склоняет название субъекта РФ в предложном падеже (на территории кого/чего)
+ * Склоняет название субъекта РФ в родительном падеже (на территории кого/чего)
  */
 function getRegionPrepositional(regionName) {
     const prepositionalMap = {
@@ -405,44 +405,21 @@ export function generateFloodSummary(parsedData, previousParsedData = null, prev
         }
     }
 
-    // Формируем сноску с датой
-    let footnoteHTML = '';
-    let footnoteText = '';
-
-    if (previousDate) {
-        footnoteText = `*в скобках указана информация на ${previousDate}`;
-        footnoteHTML = `
-      <p class="summary-footnote">
-        <small class="text-muted">*в скобках указана информация на ${previousDate}</small>
-      </p>
-    `;
-    } else {
-        footnoteText = '*в скобках указана информация за предыдущий период';
-        footnoteHTML = `
-      <p class="summary-footnote">
-        <small class="text-muted">*в скобках указана информация за предыдущий период</small>
-      </p>
-    `;
-    }
-
-    // Генерируем HTML
+    // Генерируем HTML (сноска для скобок — в generateFullSummary, один раз на блок)
     const html = `
-    <div class="summary-block">
-      <p class="summary-text">
-        <strong>Паводок:</strong> 
-        подтоплены 
-        <span class="${polesChangeClass}">${formattedPoles}</span> 
-        (<span class="color-grey">${formattedPreviousPoles}</span>)* ${polesWord} 
-        <span class="${linesChangeClass}">${formattedLines}</span> 
-        (<span class="color-grey">${formattedPreviousLines}</span>)* ${linesWord} ${voltageRange} 
-        ${locationText}.
-      </p>
-      ${footnoteHTML}
-    </div>
+    <p class="summary-text">
+      <strong>Паводок:</strong> 
+      подтоплены 
+      <span class="${polesChangeClass}">${formattedPoles}</span> 
+      (<span class="color-grey">${formattedPreviousPoles}</span>)* ${polesWord} 
+      <span class="${linesChangeClass}">${formattedLines}</span> 
+      (<span class="color-grey">${formattedPreviousLines}</span>)* ${linesWord} ${voltageRange} 
+      ${locationText}.
+    </p>
   `;
 
     // Простой текст
-    const text = `Паводок: подтоплены ${formattedPoles} (${formattedPreviousPoles})* ${polesWord} ${formattedLines} (${formattedPreviousLines})* ${linesWord} ${voltageRange} ${locationText}. ${footnoteText}`;
+    const text = `Паводок: подтоплены ${formattedPoles} (${formattedPreviousPoles})* ${polesWord} ${formattedLines} (${formattedPreviousLines})* ${linesWord} ${voltageRange} ${locationText}.`;
 
     return {
         text,
@@ -463,46 +440,141 @@ export function generateFloodSummary(parsedData, previousParsedData = null, prev
 }
 
 /**
+ * Генерирует сводку по пожарам из суммарных данных
+ */
+export function generateFireSummary(fireSummary, previousFireSummary = null, previousDate = '') {
+    if (!fireSummary || (fireSummary.currentFires === 0 && fireSummary.currentArea === 0)) {
+        return null;
+    }
+
+    const currentFires = formatNumber(fireSummary.currentFires || 0);
+    const previousFires = formatNumber(
+        previousFireSummary ? previousFireSummary.currentFires : 0
+    );
+    const currentArea = formatNumber(fireSummary.currentArea || 0);
+    const previousArea = formatNumber(
+        previousFireSummary ? previousFireSummary.currentArea : 0
+    );
+
+    const fireWord = getWordForm(currentFires, 'очаг');
+
+    let firesClass = 'color-black';
+    let areaClass = 'color-black';
+
+    if (previousFireSummary) {
+        if ((fireSummary.currentFires || 0) > (previousFireSummary.currentFires || 0)) {
+            firesClass = 'color-red';
+        } else if ((fireSummary.currentFires || 0) < (previousFireSummary.currentFires || 0)) {
+            firesClass = 'color-green';
+        }
+
+        if ((fireSummary.currentArea || 0) > (previousFireSummary.currentArea || 0)) {
+            areaClass = 'color-red';
+        } else if ((fireSummary.currentArea || 0) < (previousFireSummary.currentArea || 0)) {
+            areaClass = 'color-green';
+        }
+    }
+
+    const html = `
+    <p class="summary-text">
+      <strong>Пожары:</strong> 
+      действуют 
+      <span class="${firesClass}">${currentFires}</span> 
+      (<span class="color-grey">${previousFires}</span>)* ${fireWord} 
+      на общей площади 
+      <span class="${areaClass}">${currentArea}</span> 
+      (<span class="color-grey">${previousArea}</span>)* га.
+    </p>
+  `;
+
+    const text = `Пожары: действуют ${currentFires} (${previousFires})* ${fireWord} на общей площади ${currentArea} (${previousArea})* га.`;
+
+    return {
+        text,
+        html,
+        stats: {
+            currentFires: fireSummary.currentFires || 0,
+            previousFires: previousFireSummary ? previousFireSummary.currentFires : 0,
+            currentArea: fireSummary.currentArea || 0,
+            previousArea: previousFireSummary ? previousFireSummary.currentArea : 0,
+        },
+    };
+}
+
+/**
  * Генерирует сводку для всех типов происшествий
  */
-export function generateFullSummary(floodData, fireData, stormData, previousData = {}, previousDate = '') {
-    const summaries = [];
+export function generateFullSummary(
+    floodData,
+    fireData,
+    stormData,
+    previousData = {},
+    previousDate = '',
+    fireSummary = null,
+    previousFireSummary = null
+) {
+    const parts = [];
 
+    // Сводка по паводкам - возвращает только HTML строку с <p>
     if (floodData && Object.keys(floodData).length > 0) {
-        const floodSummary = generateFloodSummary(
+        const floodSummaryResult = generateFloodSummary(
             floodData,
             previousData.flood || null,
             previousDate
         );
-        summaries.push({
-            type: 'flood',
-            ...floodSummary,
-        });
+        if (floodSummaryResult && floodSummaryResult.html) {
+            parts.push(floodSummaryResult.html);
+        }
     }
 
-    // TODO: Добавить генерацию для пожаров и штормов
-    if (fireData && Object.keys(fireData).length > 0) {
-        summaries.push({
-            type: 'fire',
-            text: 'Сводка по пожарам (в разработке)',
-            html: '<div class="summary-block"><p class="summary-text"><strong>Пожары:</strong> сводка в разработке</p></div>',
-            stats: null,
-        });
+    // Сводка по пожарам - возвращает только HTML строку с <p>
+    if (fireSummary && (fireSummary.currentFires > 0 || fireSummary.currentArea > 0)) {
+        const fireSummaryResult = generateFireSummary(
+            fireSummary,
+            previousFireSummary || previousData.fireSummary || null,
+            previousDate
+        );
+        if (fireSummaryResult && fireSummaryResult.html) {
+            parts.push(fireSummaryResult.html);
+        }
     }
 
-    if (stormData && Object.keys(stormData).length > 0) {
-        summaries.push({
-            type: 'storm',
-            text: 'Сводка по штормам (в разработке)',
-            html: '<div class="summary-block"><p class="summary-text"><strong>Штормы:</strong> сводка в разработке</p></div>',
-            stats: null,
-        });
+    // Если нет данных - возвращаем пустой массив
+    if (parts.length === 0) {
+        return [];
     }
 
-    return summaries;
+    // Формируем единую сноску
+    let footnoteHTML = '';
+    if (previousDate) {
+        footnoteHTML = `
+      <p class="summary-footnote">
+        <small class="text-muted">*в скобках указана информация на ${previousDate}</small>
+      </p>
+    `;
+    } else {
+        footnoteHTML = `
+      <p class="summary-footnote">
+        <small class="text-muted">*в скобках указана информация за предыдущий период</small>
+      </p>
+    `;
+    }
+
+    // Собираем все в один блок с одной сноской
+    const combinedHTML = `
+    <div class="summary-block">
+      ${parts.join('\n')}
+      ${footnoteHTML}
+    </div>
+  `;
+
+    return [{
+        type: 'combined',
+        html: combinedHTML,
+        text: parts.join(' '),
+    }];
 }
 
-//
 // Экспортируем для тестирования
 export {
     getRegionGenitive,

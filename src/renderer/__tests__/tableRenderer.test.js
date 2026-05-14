@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
     createDistrictHeader,
     createRegionSection,
-    createFilialSection,
+    createFloodSection,
     generateFullReport
 } from '../tableRenderer';
 
@@ -89,7 +89,7 @@ describe('New Table Renderer', () => {
 
     it('should create filial section with color coding', () => {
         const item = sampleMergedData['Южный ФО'].flood['Волгоградская область'][0];
-        const filial = createFilialSection(item);
+        const filial = createFloodSection(item);
 
         expect(filial.classList.contains('region-filial')).toBe(true);
 

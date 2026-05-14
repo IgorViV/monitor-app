@@ -104,6 +104,7 @@ describe('EventManager', () => {
     beforeEach(() => {
         mockApp = {
             constructor: MonitorApp,
+            setDates: vi.fn(),
             processFloodData: vi.fn().mockReturnValue(true),
             processFireData: vi.fn().mockReturnValue(true),
             processStormData: vi.fn().mockReturnValue(true),

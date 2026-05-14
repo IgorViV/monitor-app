@@ -179,3 +179,57 @@ export function sortRegions(data) {
 
     return sorted;
 }
+
+/**
+ * Сравнивает данные о пожарах
+ */
+export function compareFireData(currentFireData = {}, previousFireData = {}) {
+    const result = {};
+
+    // Собираем все округа
+    const allDistricts = new Set([
+        ...Object.keys(currentFireData),
+        ...Object.keys(previousFireData),
+    ]);
+
+    allDistricts.forEach(district => {
+        result[district] = {};
+
+        const currentRegions = currentFireData[district] || {};
+        const previousRegions = previousFireData[district] || {};
+
+        const allRegions = new Set([
+            ...Object.keys(currentRegions),
+            ...Object.keys(previousRegions),
+        ]);
+
+        allRegions.forEach(region => {
+            const currentItems = currentRegions[region] || [];
+            const previousItems = previousRegions[region] || [];
+            console.log('CURRENT ITEMS: ', currentItems); // Debugging
+            console.log('PREVIOUS ITEMS: ', previousItems); // Debugging
+
+            if (currentItems.length > 0 || previousItems.length > 0) {
+                const current = currentItems[0] || {};
+                const previous = previousItems[0] || {};
+                console.log('CURRENT: ', current); // Debugging
+                console.log('PREVIOUS: ', previous); // Debugging
+
+                result[district][region] = [{
+                    company: 'Природные пожары',
+                    currentFires: current.currentFires || 0,
+                    previousFires: previous.currentFires || 0,
+                    currentArea: current.currentArea || 0,
+                    previousArea: previous.currentArea || 0,
+                    fireStatus: (current.currentFires || 0) > (previous.currentFires || 0) ? 'increase' :
+                        (current.currentFires || 0) < (previous.currentFires || 0) ? 'decrease' : 'unchanged',
+                    areaStatus: (current.currentArea || 0) > (previous.currentArea || 0) ? 'increase' :
+                        (current.currentArea || 0) < (previous.currentArea || 0) ? 'decrease' : 'unchanged',
+                    type: 'fire',
+                }];
+            }
+        });
+    });
+
+    return result;
+}

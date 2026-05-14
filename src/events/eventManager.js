@@ -259,10 +259,8 @@ export class EventManager {
      */
     async handleMakeMonitor() {
         try {
-            // Показываем индикатор загрузки
             this.showLoading(true);
 
-            // Валидируем данные
             if (!this.validateAllInputs()) {
                 this.showLoading(false);
                 return;
@@ -271,6 +269,7 @@ export class EventManager {
             // Сохраняем даты
             const currentDate = this.elements.nextDate?.value || '';
             const previousDate = this.elements.prevDate?.value || '';
+            this.app.setDates(currentDate, previousDate);
 
             // Собираем данные
             const floodText = this.elements.textareaFlood?.value || '';
@@ -278,6 +277,10 @@ export class EventManager {
             const fireText = this.elements.textareaFire?.value || '';
             const firePrevText = this.elements.textareaFirePrev?.value || '';
             const stormText = this.elements.textareaStorm?.value || '';
+
+            // Сбрасываем приложение перед обработкой новых данных
+            this.app.reset();
+            this.app.setDates(currentDate, previousDate);
 
             // Обрабатываем данные
             let hasData = false;
@@ -299,60 +302,65 @@ export class EventManager {
 
             if (!hasData) {
                 this.showNotification('Не удалось обработать данные. Проверьте формат ввода.', 'danger');
+                this.showLoading(false);
                 return;
             }
 
-            // Устанавливаем даты в приложение
-            this.app.setDates(currentDate, previousDate);
+            // Очищаем контейнер отчета перед добавлением новых данных
+            const reportContainer = this.elements.reportContainer;
+            if (reportContainer) {
+                reportContainer.innerHTML = '';
+            }
 
             // Генерируем и отображаем отчет
-            await this.app.renderReport(this.elements.reportContainer);
+            this.app.renderReport(reportContainer);
 
-            // Безопасно скроллим к отчету
-            if (this.elements.reportContainer && typeof this.elements.reportContainer.scrollIntoView === 'function') {
+            // Добавляем сводку перед отчетом
+            const summaryHTML = this.app.getSummaryHTML();
+
+            if (summaryHTML && reportContainer) {
+                // Удаляем старый summary-container если есть
+                const oldSummary = document.getElementById('summary-container');
+                if (oldSummary) {
+                    oldSummary.remove();
+                }
+
+                // Создаем новый summary-container
+                const summaryContainer = this.createSummaryContainer();
+                summaryContainer.innerHTML = summaryHTML;
+
+                // Вставляем сводку перед таблицами округов
+                if (reportContainer.firstChild) {
+                    reportContainer.insertBefore(summaryContainer, reportContainer.firstChild);
+                } else {
+                    reportContainer.appendChild(summaryContainer);
+                }
+            }
+
+            // Скроллим к отчету
+            if (reportContainer && typeof reportContainer.scrollIntoView === 'function') {
                 setTimeout(() => {
                     try {
-                        this.elements.reportContainer.scrollIntoView({
+                        reportContainer.scrollIntoView({
                             behavior: 'smooth',
                             block: 'start',
                             inline: 'nearest'
                         });
-
-                        // Добавляем отступ сверху для лучшей видимости
                         if (typeof window.scrollBy === 'function') {
                             window.scrollBy(0, -20);
                         }
                     } catch (scrollError) {
-                        // Игнорируем ошибки скролла в тестах
                         console.debug('Scroll failed:', scrollError);
                     }
                 }, 100);
             }
 
-            const summaryContainer = document.getElementById('summary-container') || this.createSummaryContainer();
-            const summaries = this.app.getSummary();
-
-            summaryContainer.innerHTML = '';
-            summaries.forEach(summary => {
-                const summaryElement = document.createElement('div');
-                summaryElement.className = 'summary-block';
-                summaryElement.innerHTML = summary.html;
-                summaryContainer.appendChild(summaryElement);
-            });
-
-            // Вставляем сводку перед отчетом
-            const reportContainer = this.elements.reportContainer;
-            if (reportContainer && summaryContainer) {
-                reportContainer.insertBefore(summaryContainer, reportContainer.firstChild);
-            }
-
-            // Сохраняем данные в localStorage
             this.saveToLocalStorage();
-
             this.showNotification('Монитор успешно подготовлен', 'success');
 
         } catch (error) {
             console.error('Error generating monitor:', error);
+            console.error('Stack:', error.stack);
             this.showNotification('Произошла ошибка при подготовке монитора', 'danger');
         } finally {
             this.showLoading(false);
@@ -360,6 +368,12 @@ export class EventManager {
     }
 
     createSummaryContainer() {
+        // Удаляем старый если есть
+        const oldContainer = document.getElementById('summary-container');
+        if (oldContainer) {
+            oldContainer.remove();
+        }
+
         const container = document.createElement('div');
         container.id = 'summary-container';
         container.className = 'summary-container mb-4';

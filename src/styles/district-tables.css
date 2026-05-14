@@ -118,6 +118,36 @@
     font-size: 0.9em;
 }
 
+/* Иконка в заголовке филиала */
+.incident-icon-small {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+/* Стили для строки с пожарами */
+.fire-item {
+    border-left: 3px solid #fd7e14;
+    background-color: #fff8f3;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+}
+
+.fire-title {
+    color: #fd7e14;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+/* Разделитель между типами происшествий */
+.region-filial + .fire-item {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed #dee2e6;
+}
+
 /* Адаптивность */
 @media (max-width: 768px) {
     .district-title {

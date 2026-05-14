@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateFloodSummary, generateFullSummary } from '../summaryGenerator';
+import { generateFloodSummary, generateFullSummary, generateFireSummary } from '../summaryGenerator';
 
 describe('Flood Summary Generator', () => {
     const sampleCurrentData = {
@@ -71,7 +71,6 @@ describe('Flood Summary Generator', () => {
 
         // Проверяем наличие регионов в родительном падеже
         const regions = result.stats.regions;
-        console.log('Regions:', regions); // Для отладки
 
         expect(regions).toContain('Астраханской');
         expect(regions).toContain('Волгоградской');
@@ -120,14 +119,15 @@ describe('Flood Summary Generator', () => {
         // Проверяем что текст содержит " и " перед последним регионом
         expect(result.text).toContain(' и ');
 
-        // Проверяем что текст заканчивается точкой
-        expect(result.text.trim()).toMatch(/\.$/);
+        // Основное предложение заканчивается точкой до сноски (сноска без финальной точки)
+        const beforeFootnote = result.text.split('*в скобках')[0].trim();
+        expect(beforeFootnote).toMatch(/\.$/);
 
         // Проверяем что список содержит запятые для перечисления
         expect(result.text).toContain(', ');
 
-        // Проверяем формат: "...областей, ... и Чувашской Республики."
-        expect(result.text).toMatch(/\w+ и \w+\.$/);
+        // Проверяем формат: "... и Чувашской Республики." в основной части
+        expect(beforeFootnote).toMatch(/ и Чувашской Республики\.$/);
     });
 
     it('should handle single region', () => {
@@ -141,20 +141,20 @@ describe('Flood Summary Generator', () => {
 
         const result = generateFloodSummary(singleRegionData, null);
 
-        // Для одного региона: "на территории Астраханской области."
+        // Для одного региона: "на территории Томской области."
         expect(result.text).toContain('на территории');
         expect(result.text).not.toContain('на территориях');
         expect(result.text).not.toContain('субъектов России');
-        expect(result.text).toContain('Астраханской области');
+        expect(result.text).toContain('Томской области');
 
-        // Проверяем точный формат
+        // Текст без сноски: сноска добавляется в generateFullSummary для общего блока
         expect(result.text).toBe(
-            'Паводок: подтоплены 201 (0)* опора 17 (0)* ЛЭП 10-35 кВ на территории Астраханской области.'
+            'Паводок: подтоплены 194 (0)* опоры 8 (0)* ЛЭП 0,4-10 кВ на территории Томской области.'
         );
 
         // Проверяем HTML
         expect(result.html).toContain('на территории');
-        expect(result.html).toContain('Астраханской области');
+        expect(result.html).toContain('Томской области');
         expect(result.html).not.toContain('субъектов России');
     });
 
@@ -174,10 +174,13 @@ describe('Flood Summary Generator', () => {
 
         const result = generateFloodSummary(twoRegionsData, null);
 
-        // Для двух регионов должно быть " и " без запятых
-        expect(result.text).not.toContain(',');
-        expect(result.text).toContain(' и ');
-        expect(result.text).toMatch(/Томской и Волгоградской/);
+        // Для двух регионов перечисление через " и " без запятых (запятая в "0,4-10" в напряжении допустима)
+        const regionListMatch = result.text.match(/субъектов России: ([^.]+)\./);
+        expect(regionListMatch).toBeTruthy();
+        expect(regionListMatch[1]).not.toContain(',');
+        expect(regionListMatch[1]).toContain(' и ');
+        // Алфавитная сортировка названий субъектов
+        expect(regionListMatch[1]).toMatch(/Волгоградской и Томской|Томской и Волгоградской/);
     });
 
     it('should format numbers with spaces', () => {
@@ -223,6 +226,56 @@ describe('Flood Summary Generator', () => {
     });
 });
 
+describe('Fire Summary Generator', () => {
+    it('should generate fire summary from parsed summary data', () => {
+        const currentSummary = {
+            currentFires: 8,
+            previousFires: 0,
+            currentArea: 73075,
+            previousArea: 0,
+        };
+
+        const previousSummary = {
+            currentFires: 27,
+            previousFires: 0,
+            currentArea: 63566,
+            previousArea: 0,
+        };
+
+        const result = generateFireSummary(currentSummary, previousSummary, '15.04.2026');
+
+        expect(result).toBeTruthy();
+        expect(result.html).toContain('8');
+        expect(result.html).toContain('27');
+        // ru-RU: узкий неразрывный пробел между группами разрядов
+        expect(result.html).toMatch(/73[\s\u202f]075/);
+        expect(result.html).toMatch(/63[\s\u202f]566/);
+
+        // Уменьшение - зеленый цвет
+        expect(result.html).toContain('color-green');
+    });
+
+    it('should handle missing previous data', () => {
+        const currentSummary = {
+            currentFires: 8,
+            currentArea: 73075,
+        };
+
+        const result = generateFireSummary(currentSummary, null);
+
+        expect(result).toBeTruthy();
+        expect(result.html).toContain('>0<'); // предыдущие значения = 0
+    });
+
+    it('should return null for empty summary', () => {
+        const result = generateFireSummary(null);
+        expect(result).toBeNull();
+
+        const result2 = generateFireSummary({ currentFires: 0, currentArea: 0 });
+        expect(result2).toBeNull();
+    });
+});
+
 describe('generateFullSummary', () => {
     const sampleFloodData = {
         'Приволжский ФО': {
@@ -240,8 +293,9 @@ describe('generateFullSummary', () => {
             {}  // previous data
         );
 
-        expect(summaries.length).toBe(1); // Только flood
-        expect(summaries[0].type).toBe('flood');
+        expect(summaries.length).toBe(1);
+        expect(summaries[0].type).toBe('combined');
+        expect(summaries[0].html).toContain('Паводок');
     });
 
     it('should return empty array when no data', () => {

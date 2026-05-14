@@ -70,6 +70,23 @@ export const getWordForm = (number, word) => {
  * Парсит число из строки, обрабатывая пробелы
  */
 export const parseNumber = (str) => {
+    // Проверка на undefined и null
+    if (str === undefined || str === null) {
+        console.warn('parseNumber получил undefined/null значение');
+        return 0;
+    }
+
+    // Если передали число, преобразуем в строку
+    if (typeof str === 'number') {
+        str = String(str);
+    }
+
+    // Если после всего это не строка, возвращаем значение по умолчанию
+    if (typeof str !== 'string') {
+        console.warn(`parseNumber получил нестроковое значение: ${typeof str}`, str);
+        return 0;
+    }
+
     return parseInt(str.replace(/\s/g, ''), 10) || 0;
 }
 
