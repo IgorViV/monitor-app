@@ -129,7 +129,7 @@ function createFireSection(fireData) {
     prevFiresSpan.className = 'color-grey';
     prevFiresSpan.textContent = formatNumber(fireData.previousFires || 0);
     dataP.appendChild(prevFiresSpan);
-    dataP.appendChild(document.createTextNode(')* очага, '));
+    dataP.appendChild(document.createTextNode(`)* ${getWordForm(fireData.currentFires, 'очаг')}, `));
 
     // Площадь
     const currentAreaSpan = document.createElement('span');
