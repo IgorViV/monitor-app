@@ -14,5 +14,6 @@ export default defineConfig({
         deps: {
             inline: ['bootstrap']
         }
-    }
+    },
+    base: './',
 });
