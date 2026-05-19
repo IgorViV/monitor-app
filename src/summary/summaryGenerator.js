@@ -388,18 +388,18 @@ export function generateFloodSummary(parsedData, previousParsedData = null, prev
     const linesWord = 'ЛЭП';
 
     // Определяем статус изменения для цвета
-    let polesChangeClass = 'color-black';
-    let linesChangeClass = 'color-black';
+    let polesChangeClass = 'color-red';
+    let linesChangeClass = 'color-red';
 
     if (previousParsedData) {
-        if (totalPoles > previousTotalPoles) {
-            polesChangeClass = 'color-red';
+        if (totalPoles === previousTotalPoles) {
+            polesChangeClass = 'color-black';
         } else if (totalPoles < previousTotalPoles) {
             polesChangeClass = 'color-green';
         }
 
-        if (totalLines > previousTotalLines) {
-            linesChangeClass = 'color-red';
+        if (totalLines === previousTotalLines) {
+            linesChangeClass = 'color-black';
         } else if (totalLines < previousTotalLines) {
             linesChangeClass = 'color-green';
         }
@@ -458,18 +458,18 @@ export function generateFireSummary(fireSummary, previousFireSummary = null, pre
 
     const fireWord = getWordForm(currentFires, 'очаг');
 
-    let firesClass = 'color-black';
-    let areaClass = 'color-black';
+    let firesClass = 'color-red';
+    let areaClass = 'color-red';
 
     if (previousFireSummary) {
-        if ((fireSummary.currentFires || 0) > (previousFireSummary.currentFires || 0)) {
-            firesClass = 'color-red';
+        if ((fireSummary.currentFires || 0) === (previousFireSummary.currentFires || 0)) {
+            firesClass = 'color-black';
         } else if ((fireSummary.currentFires || 0) < (previousFireSummary.currentFires || 0)) {
             firesClass = 'color-green';
         }
 
-        if ((fireSummary.currentArea || 0) > (previousFireSummary.currentArea || 0)) {
-            areaClass = 'color-red';
+        if ((fireSummary.currentArea || 0) === (previousFireSummary.currentArea || 0)) {
+            areaClass = 'color-black';
         } else if ((fireSummary.currentArea || 0) < (previousFireSummary.currentArea || 0)) {
             areaClass = 'color-green';
         }

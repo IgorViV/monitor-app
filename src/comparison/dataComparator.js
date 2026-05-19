@@ -206,14 +206,10 @@ export function compareFireData(currentFireData = {}, previousFireData = {}) {
         allRegions.forEach(region => {
             const currentItems = currentRegions[region] || [];
             const previousItems = previousRegions[region] || [];
-            console.log('CURRENT ITEMS: ', currentItems); // Debugging
-            console.log('PREVIOUS ITEMS: ', previousItems); // Debugging
 
             if (currentItems.length > 0 || previousItems.length > 0) {
                 const current = currentItems[0] || {};
                 const previous = previousItems[0] || {};
-                console.log('CURRENT: ', current); // Debugging
-                console.log('PREVIOUS: ', previous); // Debugging
 
                 result[district][region] = [{
                     company: 'Природные пожары',
