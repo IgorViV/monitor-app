@@ -1,8 +1,9 @@
 import { parseFloodData } from './parser/floodParser';
-import { compareData, mergeComparisonResults, compareFireData } from './comparison/dataComparator';
-import { generateFullReport } from './renderer/tableRenderer';
-import { generateFullSummary, generateFloodSummary, generateFireSummary } from './summary/summaryGenerator';
 import { parseFireData, parseFireSummary } from './parser/fireParser';
+import { parseStormData } from './parser/stormParser';
+import { compareData, mergeComparisonResults, compareFireData } from './comparison/dataComparator';
+import { generateFullSummary, generateFloodSummary, generateFireSummary } from './summary/summaryGenerator';
+import { generateFullReport } from './renderer/tableRenderer';
 
 
 export class MonitorApp {
@@ -113,8 +114,31 @@ export class MonitorApp {
     }
 
     processStormData(currentText, previousText = '') {
-        console.log('Storm data processing not implemented yet');
-        return Boolean(currentText && currentText.trim());
+        try {
+            if (!currentText || !currentText.trim()) {
+                return false;
+            }
+
+            const stormData = parseStormData(currentText);
+            if (stormData && stormData.regions && Object.keys(stormData.regions).length > 0) {
+                this.currentData.storm = stormData.regions;
+
+                if (previousText && previousText.trim()) {
+                    const prevStormData = parseStormData(previousText);
+                    if (prevStormData && prevStormData.regions) {
+                        this.previousData.storm = prevStormData.regions;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+
+        } catch (error) {
+            console.error('Error parsing storm data:', error);
+            return false;
+        }
     }
 
     generateReport() {
@@ -128,7 +152,7 @@ export class MonitorApp {
             this.previousData.fire || {}
         );
 
-        const stormComparison = {};
+        const stormComparison = this.currentData.storm || {};
 
         return mergeComparisonResults(floodComparison, fireComparison, stormComparison);
     }

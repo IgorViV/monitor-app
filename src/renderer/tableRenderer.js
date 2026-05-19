@@ -2,8 +2,16 @@ import { REGION_TO_COLOR, INCIDENT_ICONS } from '../utils/constants';
 import { formatComparisonLine } from '../comparison/formatters';
 import { getWordForm, formatNumber } from '../utils/textUtils';
 
+// Константы для группировки иконок
+const STORM_RELATED_ICONS = ['storm', 'wind', 'raine', 'health', 'thunderstorm'];
+
 /**
  * Создает иконку для типа происшествия
+ * @param {Object} iconData - Данные иконки
+ * @param {string} iconData.src - Путь к изображению
+ * @param {string} iconData.alt - Альтернативный текст
+ * @param {boolean} iconData.visible - Флаг видимости
+ * @returns {HTMLImageElement}
  */
 function createIconElement(iconData) {
     const img = document.createElement('img');
@@ -20,43 +28,79 @@ function createIconElement(iconData) {
 }
 
 /**
+ * Проверяет наличие данных о штормовых явлениях для конкретного типа
+ * @param {Object} mergedDistrictData - Данные федерального округа
+ * @param {string} iconKey - Ключ иконки для проверки
+ * @returns {boolean}
+ */
+function checkStormData(mergedDistrictData, iconKey) {
+    const stormData = mergedDistrictData?.storm;
+
+    if (!stormData || Object.keys(stormData).length === 0) {
+        return false;
+    }
+
+    return Object.values(stormData).some(stormArray =>
+        Array.isArray(stormArray) &&
+        stormArray.length > 0 &&
+        Array.isArray(stormArray[0]?.icons) &&
+        stormArray[0].icons.includes(iconKey)
+    );
+}
+
+/**
  * Определяет активные иконки для федерального округа
+ * @param {Object} mergedDistrictData - Данные федерального округа
+ * @returns {Array<Object>} Массив иконок с флагом видимости
  */
 function getActiveIcons(mergedDistrictData) {
-    const icons = [];
+    if (!mergedDistrictData) {
+        return [];
+    }
 
     const allIcons = [
         { key: 'flood', ...INCIDENT_ICONS.flood },
         { key: 'fire', ...INCIDENT_ICONS.fire },
-        { key: 'storm', ...INCIDENT_ICONS.storm },
-        { key: 'wind', ...INCIDENT_ICONS.wind },
-        { key: 'raine', ...INCIDENT_ICONS.raine },
-        { key: 'health', ...INCIDENT_ICONS.health },
-        { key: 'thunderstorm', ...INCIDENT_ICONS.thunderstorm },
+        ...STORM_RELATED_ICONS.map(key => ({ key, ...INCIDENT_ICONS[key] }))
     ];
 
-    allIcons.forEach(icon => {
+    return allIcons.map(icon => {
         let hasData = false;
 
-        if (icon.key === 'flood') {
-            hasData = mergedDistrictData.flood && Object.keys(mergedDistrictData.flood).length > 0;
-        } else if (icon.key === 'fire') {
-            hasData = mergedDistrictData.fire && Object.keys(mergedDistrictData.fire).length > 0;
-        } else if (icon.key === 'storm') {
-            hasData = mergedDistrictData.storm && Object.keys(mergedDistrictData.storm).length > 0;
+        switch (icon.key) {
+            case 'flood':
+                hasData = Boolean(
+                    mergedDistrictData.flood &&
+                    Object.keys(mergedDistrictData.flood).length > 0
+                );
+                break;
+
+            case 'fire':
+                hasData = Boolean(
+                    mergedDistrictData.fire &&
+                    Object.keys(mergedDistrictData.fire).length > 0
+                );
+                break;
+
+            default:
+                if (STORM_RELATED_ICONS.includes(icon.key)) {
+                    hasData = checkStormData(mergedDistrictData, icon.key);
+                }
+                break;
         }
 
-        icons.push({
+        return {
             ...icon,
             visible: hasData,
-        });
+        };
     });
-
-    return icons;
 }
 
 /**
  * Создает заголовок федерального округа
+ * @param {string} districtName - Название федерального округа
+ * @param {Object} mergedDistrictData - Данные федерального округа
+ * @returns {HTMLDivElement}
  */
 function createDistrictHeader(districtName, mergedDistrictData) {
     const headerDiv = document.createElement('div');
@@ -87,14 +131,30 @@ function createDistrictHeader(districtName, mergedDistrictData) {
 }
 
 /**
+ * Создает span элемент для сравнения значений
+ * @param {number} value - Значение
+ * @param {string} className - CSS класс
+ * @returns {HTMLSpanElement}
+ */
+function createComparisonSpan(value, className) {
+    const span = document.createElement('span');
+    span.className = className;
+    span.textContent = formatNumber(value || 0);
+    return span;
+}
+
+/**
  * Определяет CSS класс для статуса изменения пожаров
+ * @param {Object} fireData - Данные о пожарах
+ * @param {string} field - Тип поля ('fires' или 'area')
+ * @returns {string} CSS класс
  */
 function getFireStatusClass(fireData, field) {
     const currentField = field === 'fires' ? 'currentFires' : 'currentArea';
     const previousField = field === 'fires' ? 'previousFires' : 'previousArea';
 
-    const current = fireData[currentField] || 0;
-    const previous = fireData[previousField] || 0;
+    const current = fireData?.[currentField] || 0;
+    const previous = fireData?.[previousField] || 0;
 
     if (current > previous) return 'color-red';
     if (current < previous) return 'color-green';
@@ -103,45 +163,43 @@ function getFireStatusClass(fireData, field) {
 
 /**
  * Создает секцию с данными о пожарах в регионе
+ * @param {Object} fireData - Данные о пожарах
+ * @returns {HTMLDivElement|null}
  */
 function createFireSection(fireData) {
-    if (!fireData || (!fireData.currentFires && !fireData.previousFires)) {
+    if (!fireData) {
+        return null;
+    }
+
+    const {
+        currentFires = 0,
+        previousFires = 0,
+        currentArea = 0,
+        previousArea = 0
+    } = fireData;
+
+    if (!currentFires && !previousFires && !currentArea && !previousArea) {
         return null;
     }
 
     const fireDiv = document.createElement('div');
     fireDiv.className = 'region-filial fire-item';
 
-    // Данные о пожарах
     const dataP = document.createElement('p');
 
     const firesClass = getFireStatusClass(fireData, 'fires');
     const areaClass = getFireStatusClass(fireData, 'area');
 
     // Количество очагов
-    const currentFiresSpan = document.createElement('span');
-    currentFiresSpan.className = firesClass;
-    currentFiresSpan.textContent = formatNumber(fireData.currentFires || 0);
-    dataP.appendChild(currentFiresSpan);
-
+    dataP.appendChild(createComparisonSpan(currentFires, firesClass));
     dataP.appendChild(document.createTextNode(' ('));
-    const prevFiresSpan = document.createElement('span');
-    prevFiresSpan.className = 'color-grey';
-    prevFiresSpan.textContent = formatNumber(fireData.previousFires || 0);
-    dataP.appendChild(prevFiresSpan);
-    dataP.appendChild(document.createTextNode(`)* ${getWordForm(fireData.currentFires, 'очаг')}, `));
+    dataP.appendChild(createComparisonSpan(previousFires, 'color-grey'));
+    dataP.appendChild(document.createTextNode(`)* ${getWordForm(currentFires, 'очаг')}, `));
 
     // Площадь
-    const currentAreaSpan = document.createElement('span');
-    currentAreaSpan.className = areaClass;
-    currentAreaSpan.textContent = formatNumber(fireData.currentArea || 0);
-    dataP.appendChild(currentAreaSpan);
-
+    dataP.appendChild(createComparisonSpan(currentArea, areaClass));
     dataP.appendChild(document.createTextNode(' ('));
-    const prevAreaSpan = document.createElement('span');
-    prevAreaSpan.className = 'color-grey';
-    prevAreaSpan.textContent = formatNumber(fireData.previousArea || 0);
-    dataP.appendChild(prevAreaSpan);
+    dataP.appendChild(createComparisonSpan(previousArea, 'color-grey'));
     dataP.appendChild(document.createTextNode(')* га'));
 
     fireDiv.appendChild(dataP);
@@ -151,6 +209,8 @@ function createFireSection(fireData) {
 
 /**
  * Создает секцию с данными о подтоплениях (филиале)
+ * @param {Object} item - Данные о подтоплении
+ * @returns {HTMLDivElement}
  */
 function createFloodSection(item) {
     const formatted = formatComparisonLine(item);
@@ -164,32 +224,18 @@ function createFloodSection(item) {
 
     const dataP = document.createElement('p');
 
-    const currentPolesSpan = document.createElement('span');
-    currentPolesSpan.className = formatted.currentPolesClass;
-    currentPolesSpan.textContent = formatted.currentPoles;
-    dataP.appendChild(currentPolesSpan);
-
+    // Опоры
+    dataP.appendChild(createComparisonSpan(formatted.currentPoles, formatted.currentPolesClass));
     dataP.appendChild(document.createTextNode(' ('));
-    const prevPolesSpan = document.createElement('span');
-    prevPolesSpan.className = formatted.previousPolesClass;
-    prevPolesSpan.textContent = formatted.previousPoles;
-    dataP.appendChild(prevPolesSpan);
+    dataP.appendChild(createComparisonSpan(formatted.previousPoles, formatted.previousPolesClass));
     dataP.appendChild(document.createTextNode(')* '));
-
     dataP.appendChild(document.createTextNode(formatted.polesWord + ' на '));
 
-    const currentLinesSpan = document.createElement('span');
-    currentLinesSpan.className = formatted.currentLinesClass;
-    currentLinesSpan.textContent = formatted.currentLines;
-    dataP.appendChild(currentLinesSpan);
-
+    // Линии
+    dataP.appendChild(createComparisonSpan(formatted.currentLines, formatted.currentLinesClass));
     dataP.appendChild(document.createTextNode(' ('));
-    const prevLinesSpan = document.createElement('span');
-    prevLinesSpan.className = formatted.previousLinesClass;
-    prevLinesSpan.textContent = formatted.previousLines;
-    dataP.appendChild(prevLinesSpan);
+    dataP.appendChild(createComparisonSpan(formatted.previousLines, formatted.previousLinesClass));
     dataP.appendChild(document.createTextNode(')* '));
-
     dataP.appendChild(document.createTextNode(`${formatted.linesWord} ${formatted.voltageRange}`));
 
     filialDiv.appendChild(dataP);
@@ -199,8 +245,12 @@ function createFloodSection(item) {
 
 /**
  * Создает секцию региона с учетом пожаров и паводков
+ * @param {string} regionName - Название региона
+ * @param {Array} regionData - Данные о паводках в регионе
+ * @param {Object|null} fireData - Данные о пожарах в регионе
+ * @returns {HTMLDivElement}
  */
-function createRegionSection(regionName, regionData, fireData = null) {
+function createRegionSection(regionName, regionData = [], fireData = null) {
     const regionDiv = document.createElement('div');
     regionDiv.className = 'district-region';
 
@@ -210,16 +260,14 @@ function createRegionSection(regionName, regionData, fireData = null) {
     regionDiv.appendChild(regionTitle);
 
     // Сначала показываем пожары (если есть)
-    if (fireData) {
-        const fireSection = createFireSection(fireData);
-        if (fireSection) {
-            regionDiv.appendChild(fireSection);
-        }
+    const fireSection = createFireSection(fireData);
+    if (fireSection) {
+        regionDiv.appendChild(fireSection);
     }
 
     // Затем показываем паводки
-    if (regionData && regionData.length > 0) {
-        const sortedCompanies = regionData.sort((a, b) =>
+    if (regionData.length > 0) {
+        const sortedCompanies = [...regionData].sort((a, b) =>
             a.company.localeCompare(b.company)
         );
 
@@ -232,7 +280,26 @@ function createRegionSection(regionName, regionData, fireData = null) {
 }
 
 /**
+ * Собирает все уникальные регионы из данных округа
+ * @param {Object} districtData - Данные федерального округа
+ * @returns {string[]} Отсортированный массив названий регионов
+ */
+function collectRegions(districtData) {
+    const allRegions = new Set();
+
+    ['flood', 'fire', 'storm'].forEach(dataType => {
+        if (districtData[dataType]) {
+            Object.keys(districtData[dataType]).forEach(region => allRegions.add(region));
+        }
+    });
+
+    return Array.from(allRegions).sort();
+}
+
+/**
  * Генерирует полный отчет с поддержкой пожаров
+ * @param {HTMLElement} container - DOM элемент для вставки отчета
+ * @param {Object} mergedData - Объединенные данные для отчета
  */
 export function generateFullReport(container, mergedData) {
     container.innerHTML = '';
@@ -245,40 +312,26 @@ export function generateFullReport(container, mergedData) {
         return;
     }
 
-    // Убираем служебные ключи
-    const fireSummary = mergedData._fireSummary;
-    delete mergedData._fireSummary;
+    // Безопасно извлекаем служебные ключи, не мутируя исходный объект
+    const { _fireSummary: fireSummary, ...districtData } = mergedData;
 
     // Фильтруем только обычные ключи (федеральные округа)
-    const districtKeys = Object.keys(mergedData).filter(key => !key.startsWith('_'));
-    const sortedDistricts = districtKeys.sort();
+    const districtKeys = Object.keys(districtData)
+        .filter(key => !key.startsWith('_'))
+        .sort();
 
-    sortedDistricts.forEach(district => {
-        const districtData = mergedData[district];
-        if (!districtData) return;
+    districtKeys.forEach(district => {
+        const districtInfo = districtData[district];
+        if (!districtInfo) return;
 
-        const districtBlock = createDistrictHeader(district, districtData);
+        const districtBlock = createDistrictHeader(district, districtInfo);
 
-        // Собираем все регионы
-        const allRegions = new Set();
-
-        if (districtData.flood) {
-            Object.keys(districtData.flood).forEach(r => allRegions.add(r));
-        }
-
-        if (districtData.fire) {
-            Object.keys(districtData.fire).forEach(r => allRegions.add(r));
-        }
-
-        if (districtData.storm) {
-            Object.keys(districtData.storm).forEach(r => allRegions.add(r));
-        }
-
-        const sortedRegions = Array.from(allRegions).sort();
+        // Собираем все регионы из всех типов данных
+        const sortedRegions = collectRegions(districtInfo);
 
         sortedRegions.forEach(region => {
-            const floodData = districtData.flood?.[region] || [];
-            const fireDataArray = districtData.fire?.[region] || [];
+            const floodData = districtInfo.flood?.[region] || [];
+            const fireDataArray = districtInfo.fire?.[region] || [];
             const fireData = fireDataArray.length > 0 ? fireDataArray[0] : null;
 
             const regionSection = createRegionSection(region, floodData, fireData);
@@ -288,7 +341,7 @@ export function generateFullReport(container, mergedData) {
         container.appendChild(districtBlock);
     });
 
-    // Восстанавливаем fireSummary если был
+    // Восстанавливаем fireSummary если был (в исходном объекте)
     if (fireSummary) {
         mergedData._fireSummary = fireSummary;
     }
@@ -303,4 +356,6 @@ export {
     getActiveIcons,
     createIconElement,
     getFireStatusClass,
+    checkStormData,
+    collectRegions,
 };
