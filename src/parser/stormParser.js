@@ -16,16 +16,19 @@ function extractRegionName(line) {
     let normalRegionNames = [];
     // Паттерны для извлечения региона
     const patterns = [
-        /(?:в|на)\s+(.+?)\s+(?:сильный|ливень|гроза|град|ветер|ожидаются|подъем)/i,
+        /(?:в|на)\s+(.+?)\s+(?:сильный|ливень|гроза|град|ветер|ожидаются|подъем|аномально жаркая погода|в горах сильные дожди|осадки)/i,
         /(?:в|на)\s+(.+?)$/i,
     ];
-
+    // (дождь, мокрый снег, снег)
     for (const pattern of patterns) {
         const match = line.match(pattern);
         if (match) {
             let regionNames = match[1].trim();
             // Убираем лишние слова
-            regionNames = regionNames.replace(/^(на севере |севере |в предгорных районах )/ig, '').replace(/( областях| краях| республиках)/ig, '');
+            regionNames = regionNames.
+            replace(/^(на севере |севере |в предгорных районах |в горах)/ig, '').
+            replace(/( областях| краях| республиках)/ig, '').
+            replace(/\((дождь|мокрый снег|снег),\s*(дождь|мокрый снег|снег),\s*(дождь|мокрый снег|снег)\)/ig, '');
             const linesRegionName = regionNames.split(', ');
             linesRegionName.forEach((line) => {
                 line = line.replace(/(?:в|на)\s+/, '').replace(/\.+$/, '');
@@ -147,6 +150,7 @@ function parseStormLine(line) {
     let regionData = [];
     const cleanLine = line.replace(/^\s*[\u2010\u2011\u2012\u2013\u2014\u2015-]\s*/, '')
         .replace(/\d+(-\d+)?\s+(апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря|января|февраля|марта)\s+/ig, '')
+        .replace(/\d+(-\d+)?\s+в\s+/, '')
         .trim();
     const regionName = extractRegionName(cleanLine);
     if (!regionName.length) {
