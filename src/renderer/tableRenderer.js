@@ -109,8 +109,7 @@ function createDistrictHeader(districtName, mergedDistrictData) {
     const title = document.createElement('h5');
     title.className = 'district-title';
 
-    const bgColor = REGION_TO_COLOR[districtName] || '#f5f5f5';
-    title.style.backgroundColor = bgColor;
+    title.style.backgroundColor = REGION_TO_COLOR[districtName] || '#f5f5f5';
 
     const titleSpan = document.createElement('span');
     titleSpan.textContent = districtName;

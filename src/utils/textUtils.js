@@ -192,5 +192,6 @@ export const parseLine = (str) => {
         return { area, org, data };
     }
 
+
     return null;
 }
