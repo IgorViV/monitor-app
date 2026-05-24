@@ -109,8 +109,7 @@ function createDistrictHeader(districtName, mergedDistrictData) {
     const title = document.createElement('h5');
     title.className = 'district-title';
 
-    const bgColor = REGION_TO_COLOR[districtName] || '#f5f5f5';
-    title.style.backgroundColor = bgColor;
+    title.style.backgroundColor = REGION_TO_COLOR[districtName] || '#f5f5f5';
 
     const titleSpan = document.createElement('span');
     titleSpan.textContent = districtName;
@@ -140,6 +139,7 @@ function createComparisonSpan(value, className) {
     const span = document.createElement('span');
     span.className = className;
     span.textContent = formatNumber(value || 0);
+
     return span;
 }
 
@@ -325,7 +325,6 @@ export function generateFullReport(container, mergedData) {
         if (!districtInfo) return;
 
         const districtBlock = createDistrictHeader(district, districtInfo);
-
         // Собираем все регионы из всех типов данных
         const sortedRegions = collectRegions(districtInfo);
 
