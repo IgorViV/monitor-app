@@ -140,6 +140,7 @@ function createComparisonSpan(value, className) {
     const span = document.createElement('span');
     span.className = className;
     span.textContent = formatNumber(value || 0);
+
     return span;
 }
 
@@ -325,7 +326,6 @@ export function generateFullReport(container, mergedData) {
         if (!districtInfo) return;
 
         const districtBlock = createDistrictHeader(district, districtInfo);
-
         // Собираем все регионы из всех типов данных
         const sortedRegions = collectRegions(districtInfo);
 

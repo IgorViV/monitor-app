@@ -156,7 +156,11 @@ export const escapeHtml = (value) => {
  * @return {string}
  */
 export const formatNumber = (value) => {
+    if (typeof value === 'string') {
+        value = value.replace(/(\s|\u00a0)/g, '');
+    }
     if (value === null || value === undefined || Number.isNaN(Number(value))) return '0';
+
     return new Intl.NumberFormat('ru-RU').format(value);
 };
 
@@ -178,7 +182,7 @@ export const parseLine = (str) => {
     }
 
     // Если не подошло — пробуем формат "без точки" (большой филиал)
-    const regexNoDot = /^(.+?)\s*\((.+?)\):\s*(.+)$/;
+    const regexNoDot = /^(.+?)\s*\((.+?)\):\s*(.+)$/; // TODO учесть формат записи филиала: «Тюмень» (Тюменская область, Ханты-Мансийский АО) т.е. две области
     match = str.match(regexNoDot);
 
     if (match) {

@@ -85,7 +85,7 @@ export function parseFloodLine(line) {
     }
 
     throw new Error(`Cannot parse details: ${details}`);
-}
+} // TODO учесть наличие подтопленных ТП 10 кВ
 
 /**
  * Парсит весь текст с данными о подтоплениях
@@ -146,6 +146,5 @@ export function parseFloodData(text) {
             console.warn(`Failed to parse line: ${line}`, error);
         }
     });
-
     return result;
 }
