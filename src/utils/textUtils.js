@@ -120,7 +120,9 @@ export const normalizeText = (text) => {
     if (!text) return '';
     return String(text)
         .replace(/\u00a0/g, ' ')
+        .replace('', '')
         .replace(/\s+/g, ' ')
+        .replace(/ВЛ/g, 'ЛЭП')
         .trim();
 };
 

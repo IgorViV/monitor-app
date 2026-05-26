@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getWordForm, formatNumber, getFederalDistrict } from '../textUtils.js';
+import { getWordForm, formatNumber, getFederalDistrict, normalizeText } from '../textUtils.js';
 
 describe('getWordForm', () => {
     const testCases = [
@@ -53,4 +53,13 @@ describe('getFederalDistrict', () => {
             expect(getFederalDistrict(region)).toBe(district);
         });
     });
-})
+});
+
+describe('normalizeText', () => {
+    it('should normalize text', () => {
+        const sampleText = '\tМЭС Волги (Нижегородское ПМЭС.\u00a0Нижегородская область): 13 опор, из них 2 опоры 1 ВЛ 500 кВ, 11 опор 4 ЛЭП 220 кВ (уровень вод 10-100 см, р. Ока, Пьяна, Керженец, Кудьма, Сарма, Варнава);';
+        const expectedText = 'МЭС Волги (Нижегородское ПМЭС. Нижегородская область): 13 опор, из них 2 опоры 1 ЛЭП 500 кВ, 11 опор 4 ЛЭП 220 кВ (уровень вод 10-100 см, р. Ока, Пьяна, Керженец, Кудьма, Сарма, Варнава);';
+
+        expect(normalizeText(sampleText)).toBe(expectedText)
+    });
+});

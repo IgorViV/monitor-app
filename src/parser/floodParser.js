@@ -20,12 +20,9 @@ export function parseFloodLine(line) {
 
     const breakdownParts = details.split(/,\s*из них\s*/);
 
-    console.log('BREAK DOWN: ', breakdownParts); // TODO удалить
-
     if (breakdownParts.length === 1) {
         // const mainMatch = breakdownParts[0].match(/(\d+)\s+(опор[аы]?)\s+(\d+)\s+(ЛЭП|ВЛ)\s+(.+?)(?:\s*\(|$)/); // другой вариант
-        const mainMatch = breakdownParts[0].match(/(\d+(\s\d+)?)\s+(опор[аы]?)\s+(\d+)\s+(ЛЭП|ВЛ)\s+(.+?)(?:\s*\(|$)/);
-        console.log('MAIN MATCH: ', mainMatch); // TODO удалить
+        const mainMatch = breakdownParts[0].match(/(\d{1,3}(?:\s?\d{3})*)\s+(опор[аы]?)\s+(\d+)\s+(ЛЭП|ВЛ)\s+(.+?)(?:\s*\(|$)/);
         if (mainMatch) {
             return {
                 company,
@@ -38,14 +35,11 @@ export function parseFloodLine(line) {
         }
     } else {
         // const totalMatch = breakdownParts[0].match(/(\d+)\s+опор[аы]?/); // другой вариант
-        const totalMatch = breakdownParts[0].match(/(\d+(\s\d+)?)\s+опор[аы]?/);
-        console.log('TOTAL MATCH: ', totalMatch); // TODO удалить
+        const totalMatch = breakdownParts[0].match(/(\d{1,3}(?:\s?\d{3})*)\s+опор[аы]?/);
         const totalPoles = totalMatch ? parseNumber(totalMatch[1]) : 0;
 
         const breakdownItems = [];
         const detailParts = breakdownParts[1].split(/,\s*(?=\d+\s+опор)/);
-
-        console.log('DETAIL PARTS: ', detailParts); // TODO удалить
 
         let totalLines = 0;
         let minVoltage = Infinity;
@@ -154,5 +148,6 @@ export function parseFloodData(text) {
             console.warn(`Failed to parse line: ${line}`, error);
         }
     });
+
     return result;
 }
