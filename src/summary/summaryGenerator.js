@@ -341,6 +341,7 @@ function getUniqueRegions(parsedData) {
  * @returns {Object} - объект с суммарной информацией и HTML разметкой
  */
 export function generateFloodSummary(parsedData, previousParsedData = null, previousDate = '') {
+
     if (!parsedData || Object.keys(parsedData).length === 0) {
         return {
             text: 'Нет данных о подтоплениях',

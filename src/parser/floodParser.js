@@ -17,19 +17,19 @@ export function parseFloodLine(line) {
     const region = lineMatch.area;
     const company = lineMatch.org;
     const details = lineMatch.data;
-
     const breakdownParts = details.split(/,\s*из них\s*/);
-
     if (breakdownParts.length === 1) {
         // const mainMatch = breakdownParts[0].match(/(\d+)\s+(опор[аы]?)\s+(\d+)\s+(ЛЭП|ВЛ)\s+(.+?)(?:\s*\(|$)/); // другой вариант
         const mainMatch = breakdownParts[0].match(/(\d{1,3}(?:\s?\d{3})*)\s+(опор[аы]?)\s+(\d+)\s+(ЛЭП|ВЛ)\s+(.+?)(?:\s*\(|$)/);
+        const subMatch = breakdownParts[0].match(/(\d+)\s+ТП/);
         if (mainMatch) {
             return {
                 company,
                 region,
                 totalPoles: parseNumber(mainMatch[1]),
                 totalLines: parseNumber(mainMatch[3]),
-                voltageRange: mainMatch[5].trim(),
+                totalSubstations: subMatch ? parseNumber(subMatch[1]) : 0,
+                voltageRange: mainMatch[5].trim().replace(/(,\s+\d+)\s+ТП$/g, ''),
                 breakdown: []
             };
         }
@@ -45,14 +45,18 @@ export function parseFloodLine(line) {
         let minVoltage = Infinity;
         let maxVoltage = 0;
         let voltageUnit = 'кВ';
+        let totalSubstations = 0;
 
         detailParts.forEach(part => {
             const match = part.match(/(\d+)\s+опор[аы]?\s+(\d+)\s+(ЛЭП|ВЛ)\s+(.+?)(?:\s*\(| кВ,|$)/);
+            const subMatch = part.match(/(\d+)\s+ТП/);
+            if (subMatch) {
+                totalSubstations += parseNumber(subMatch[1]);
+            }
             if (match) {
                 const poles = parseNumber(match[1]);
                 const lines = parseNumber(match[2]);
                 const voltage = match[4].trim();
-
                 totalLines += lines;
 
                 const voltageMatch = voltage.match(/(\d+[,.]?\d*)\s*(кВ)?/);
@@ -81,13 +85,14 @@ export function parseFloodLine(line) {
             region,
             totalPoles,
             totalLines,
+            totalSubstations,
             voltageRange,
             breakdown: breakdownItems
         };
     }
 
     throw new Error(`Cannot parse details: ${details}`);
-} // TODO учесть наличие подтопленных ТП 10 кВ
+}
 
 /**
  * Парсит весь текст с данными о подтоплениях
@@ -122,7 +127,6 @@ export function parseFloodData(text) {
 
         try {
             const parsed = parseFloodLine(line.trim());
-
             if (!parsed || !parsed.region) {
                 console.warn(`Incomplete parse result for line: ${line}`);
                 return;
@@ -141,6 +145,7 @@ export function parseFloodData(text) {
                 company: parsed.company,
                 totalPoles: parsed.totalPoles,
                 totalLines: parsed.totalLines,
+                totalSubstations: parsed.totalSubstations,
                 voltageRange: parsed.voltageRange
             });
 
@@ -148,6 +153,5 @@ export function parseFloodData(text) {
             console.warn(`Failed to parse line: ${line}`, error);
         }
     });
-
     return result;
 }

@@ -98,7 +98,8 @@ export const PATTERNS = {
     FLOOD: {
         SEGMENT: /(?=«[^»]+»|МЭС\s+[А-Яа-я]+)/g,
         VOLTAGE: /(\d+)\s+опор(?:а|ы)?\s+(\d+)\s+(?:ЛЭП|ВЛ)\s+([\d,]+(?:-[\d,]+)?)\s+кВ/gi,
-        FALLBACK_POLES: /(\d+)\s+опор(?:а|ы)?/i
+        FALLBACK_POLES: /(\d+)\s+опор(?:а|ы)?/i,
+        SUBSTANTIONS: /(\d+)\s+ТП/i
     },
     FIRE: {
         CURRENT: /зафиксированы\s+([\d\s]+)(?:\s*\(([\d\s]+)\))?\s+очаг[а-я\s]+площад[а-я\s]+([\d\s]+)(?:\s*\(([\d\s]+)\))?\s*га/i,
@@ -177,14 +178,19 @@ export const parseLine = (str) => {
     let match = str.match(regexWithDot);
 
     if (match) {
-        const area = match[3];
-        const org  = match[1] + ' (' + match[2] + ')';
+        let area = match[3];
+        const parent = match[1];
+        let org  = match[1] + ' (' + match[2] + ')';
+        if (BIG_FILIALS.includes(parent.replace(/«|»/g, ''))) {
+           area = match[2];
+           org = parent;
+        }
         const data = match[4];
         return { area, org, data };
     }
 
     // Если не подошло — пробуем формат "без точки" (большой филиал)
-    const regexNoDot = /^(.+?)\s*\((.+?)\):\s*(.+)$/; // TODO учесть формат записи филиала: «Тюмень» (Тюменская область, Ханты-Мансийский АО) т.е. две области
+    const regexNoDot = /^(.+?)\s*\((.+?)\):\s*(.+)$/;
     match = str.match(regexNoDot);
 
     if (match) {
