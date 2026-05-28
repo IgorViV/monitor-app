@@ -206,20 +206,20 @@ function getRegionGenitive(regionName) {
         'Забайкальский край': 'Забайкальского края',
         'Амурская область': 'Амурской',
         'Сахалинская область': 'Сахалинской',
-        'Еврейская автономная область': 'Еврейской АО',
-        'Еврейская АО': 'Еврейской АО',
+        'Еврейская автономная область': 'Еврейской',
+        'Еврейская АО': 'Еврейской',
         'Камчатский край': 'Камчатском крае',
         'Магаданская область': 'Магаданской',
         'Республика Саха (Якутия)': 'Республики Саха (Якутия)',
         'Якутия': 'Республики Саха (Якутия)',
-        'Чукотский автономный округ': 'Чукотского АО',
-        'Чукотский АО': 'Чукотского АО',
-        'Ненецкий автономный округ': 'Ненецкого АО',
-        'Ненецкий АО': 'Ненецкого АО',
-        'Ямало-Ненецкий автономный округ': 'Ямало-Ненецкого АО',
-        'Ямало-Ненецкий АО': 'Ямало-Ненецкого АО',
-        'Ханты-Мансийский автономный округ - Югра': 'Ханты-Мансийского АО',
-        'Ханты-Мансийский АО': 'Ханты-Мансийского АО',
+        'Чукотский автономный округ': 'Чукотского',
+        'Чукотский АО': 'Чукотского',
+        'Ненецкий автономный округ': 'Ненецкого',
+        'Ненецкий АО': 'Ненецкого',
+        'Ямало-Ненецкий автономный округ': 'Ямало-Ненецкого',
+        'Ямало-Ненецкий АО': 'Ямало-Ненецкого',
+        'Ханты-Мансийский автономный округ - Югра': 'Ханты-Мансийского',
+        'Ханты-Мансийский АО': 'Ханты-Мансийского',
     };
 
     // Проверяем прямой маппинг
@@ -237,6 +237,9 @@ function getRegionGenitive(regionName) {
     if (regionName.startsWith('Республика ')) {
         return regionName.replace('Республика ', 'Республики ');
     }
+    if (regionName.endsWith('Республика')) {
+        return regionName.replace('Республика', 'Республики');
+    }
     if (regionName.endsWith('автономный округ')) {
         return regionName.replace('автономный округ', 'автономного округа');
     }
@@ -250,26 +253,40 @@ function getRegionGenitive(regionName) {
 
 /**
  * Форматирует список регионов в родительном падеже
- * @param {string[]} regionNamesList - массив названий регионов
+ * @param {Object} allRegions - объект со списками регионов по типам
  * @returns {string} отформатированная строка
  */
-function formatRegionsList(regionNamesList) {
-    if (!regionNamesList || regionNamesList.length === 0) {
+function formatRegionsList(allRegions = {}) {
+    // if (!regionNamesList || regionNamesList.length === 0) {
+    //     return '';
+    // }
+
+    if (Object.keys(allRegions).length === 0) {
         return '';
     }
 
-    if (regionNamesList.length === 1) {
-        return regionNamesList[0];
+    let result = '';
+
+    if (allRegions['Край'].length > 0) {
+        result += result ? ', ' : '';
+        result += `${allRegions['Край'].join(', ')} `;
+        result += allRegions['Край'].length > 1 ? 'краев' : 'края';
+    }
+    if (allRegions['Республика'].length > 0) {
+        result += result ? ', ' : '';
+        result += allRegions['Республика'].length > 1 ? 'республик ' : 'Республики ';
+        result += `${allRegions['Республика'].join(', ')} `;
+    }
+    if (allRegions['Область'].length > 0) {
+        result += result ? ', ' : '';
+        result += `${allRegions['Область'].join(', ')} `;
+        result += allRegions['Область'].length > 1 ? 'областей' : 'области';
+    }
+    if (allRegions['АО'].length > 0) {
+        result += result ? `, ${allRegions['АО'].join(', ')} АО` : `${allRegions['АО'].join(', ')} АО`;
     }
 
-    if (regionNamesList.length === 2) {
-        return `${regionNamesList[0]} и ${regionNamesList[1]}`;
-    }
-
-    // Для 3 и более: создаем копию массива чтобы не мутировать оригинал
-    const list = [...regionNamesList];
-    const lastRegion = list.pop();
-    return `${list.join(', ')} и ${lastRegion}`;
+    return result;
 }
 
 /**
@@ -384,17 +401,37 @@ export function generateFloodSummary(parsedData, previousParsedData = null, prev
     const voltageRange = getVoltageRange(parsedData);
 
     // Получаем уникальные регионы
+    const allRegions = {
+        'Область': [],
+        'Республика': [],
+        'Край': [],
+        'АО': [],
+    };
     const regions = getUniqueRegions(parsedData);
-    const regionNamesList = regions.map(region => getRegionGenitive(region));
+    const regionNamesList = regions.map(region => {
+        if (region.toLowerCase().includes('область')) {
+            allRegions['Область'].push(getRegionGenitive(region));
+        }
+        if (region.toLowerCase().includes('республика')) {
+            allRegions['Республика'].push(getRegionGenitive(region));
+        }
+        if (region.toLowerCase().includes('край')) {
+            allRegions['Край'].push(getRegionGenitive(region));
+        }
+        if (region.toLowerCase().includes('ао')) {
+            allRegions['АО'].push(getRegionGenitive(region));
+        }
+        return getRegionGenitive(region);
+    });
 
     // Форматируем список регионов в зависимости от количества
-    let locationText;
+    let locationText = '';
     if (regions.length === 1) {
         const regionName = regions[0];
         const regionPrepositional = getRegionPrepositional(regionName);
         locationText = `на территории ${regionPrepositional}`;
     } else {
-        const regionsText = formatRegionsList(regionNamesList);
+        const regionsText = formatRegionsList(allRegions);
         locationText = `на территориях ${regions.length} субъектов России: ${regionsText}`;
     }
 
@@ -409,6 +446,7 @@ export function generateFloodSummary(parsedData, previousParsedData = null, prev
     // Правильное склонение
     const polesWord = getWordForm(totalPoles, 'опора');
     const linesWord = 'ЛЭП';
+    const substationsWord = 'ТП';
 
     // Определяем статус изменения для цвета
     let polesChangeClass = 'color-red';
@@ -446,7 +484,7 @@ export function generateFloodSummary(parsedData, previousParsedData = null, prev
       <span class="${linesChangeClass}">${formattedLines}</span> 
       (<span class="color-grey">${formattedPreviousLines}</span>)* ${linesWord} ${voltageRange},
       <span class="${substationsChangeClass}">${formattedSubstations}</span> 
-      (<span class="color-grey">${formattedPreviousSubstations}</span>)* ТП 
+      (<span class="color-grey">${formattedPreviousSubstations}</span>)* ${substationsWord} 
       ${locationText}.
     </p>
   ` : `
@@ -463,7 +501,7 @@ export function generateFloodSummary(parsedData, previousParsedData = null, prev
 
     // Простой текст
     const text = isSubstations ? `
-    Паводок: подтоплены ${formattedPoles} (${formattedPreviousPoles})* ${polesWord} ${formattedLines} (${formattedPreviousLines})* ${linesWord} ${voltageRange}, ${formattedSubstations} (${formattedPreviousSubstations})* ТП ${locationText}.` :
+    Паводок: подтоплены ${formattedPoles} (${formattedPreviousPoles})* ${polesWord} ${formattedLines} (${formattedPreviousLines})* ${linesWord} ${voltageRange}, ${formattedSubstations} (${formattedPreviousSubstations})* ${substationsWord} ${locationText}.` :
     `Паводок: подтоплены ${formattedPoles} (${formattedPreviousPoles})* ${polesWord} ${formattedLines} (${formattedPreviousLines})* ${linesWord} ${voltageRange} ${locationText}.`;
 
     return {
