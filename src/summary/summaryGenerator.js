@@ -349,23 +349,24 @@ export function generateFloodSummary(parsedData, previousParsedData = null, prev
             stats: null,
         };
     }
-
     // Подсчет текущих значений
     let totalPoles = 0;
     let totalLines = 0;
+    let totalSubstations = 0;
 
     Object.values(parsedData).forEach(district => {
         Object.values(district).forEach(companies => {
             companies.forEach(company => {
                 totalPoles += company.totalPoles || 0;
                 totalLines += company.totalLines || 0;
+                totalSubstations += company.totalSubstations || 0;
             });
         });
     });
-
     // Подсчет предыдущих значений
     let previousTotalPoles = 0;
     let previousTotalLines = 0;
+    let previousTotalSubstations = 0;
 
     if (previousParsedData) {
         Object.values(previousParsedData).forEach(district => {
@@ -373,6 +374,7 @@ export function generateFloodSummary(parsedData, previousParsedData = null, prev
                 companies.forEach(company => {
                     previousTotalPoles += company.totalPoles || 0;
                     previousTotalLines += company.totalLines || 0;
+                    previousTotalSubstations += company.totalSubstations || 0;
                 });
             });
         });
@@ -401,6 +403,8 @@ export function generateFloodSummary(parsedData, previousParsedData = null, prev
     const formattedPreviousPoles = formatNumber(previousTotalPoles);
     const formattedLines = formatNumber(totalLines);
     const formattedPreviousLines = formatNumber(previousTotalLines);
+    const formattedSubstations = formatNumber(totalSubstations);
+    const formattedPreviousSubstations = formatNumber(previousTotalSubstations);
 
     // Правильное склонение
     const polesWord = getWordForm(totalPoles, 'опора');
@@ -409,6 +413,7 @@ export function generateFloodSummary(parsedData, previousParsedData = null, prev
     // Определяем статус изменения для цвета
     let polesChangeClass = 'color-red';
     let linesChangeClass = 'color-red';
+    let substationsChangeClass = 'color-red';
 
     if (previousParsedData) {
         if (totalPoles === previousTotalPoles) {
@@ -422,23 +427,44 @@ export function generateFloodSummary(parsedData, previousParsedData = null, prev
         } else if (totalLines < previousTotalLines) {
             linesChangeClass = 'color-green';
         }
+
+        if (totalSubstations === previousTotalSubstations) {
+            substationsChangeClass = 'color-black';
+        } else if (totalSubstations < previousTotalSubstations) {
+            substationsChangeClass = 'color-green';
+        }
     }
 
     // Генерируем HTML (сноска для скобок — в generateFullSummary, один раз на блок)
-    const html = `
+    const isSubstations = totalSubstations > 0;
+    const html = isSubstations ? `
     <p class="summary-text">
       <strong>Паводок:</strong> 
       подтоплены 
       <span class="${polesChangeClass}">${formattedPoles}</span> 
       (<span class="color-grey">${formattedPreviousPoles}</span>)* ${polesWord} 
       <span class="${linesChangeClass}">${formattedLines}</span> 
-      (<span class="color-grey">${formattedPreviousLines}</span>)* ${linesWord} ${voltageRange} 
+      (<span class="color-grey">${formattedPreviousLines}</span>)* ${linesWord} ${voltageRange},
+      <span class="${substationsChangeClass}">${formattedSubstations}</span> 
+      (<span class="color-grey">${formattedPreviousSubstations}</span>)* ТП 
+      ${locationText}.
+    </p>
+  ` : `
+    <p class="summary-text">
+      <strong>Паводок:</strong> 
+      подтоплены 
+      <span class="${polesChangeClass}">${formattedPoles}</span> 
+      (<span class="color-grey">${formattedPreviousPoles}</span>)* ${polesWord} 
+      <span class="${linesChangeClass}">${formattedLines}</span> 
+      (<span class="color-grey">${formattedPreviousLines}</span>)* ${linesWord} ${voltageRange}
       ${locationText}.
     </p>
   `;
 
     // Простой текст
-    const text = `Паводок: подтоплены ${formattedPoles} (${formattedPreviousPoles})* ${polesWord} ${formattedLines} (${formattedPreviousLines})* ${linesWord} ${voltageRange} ${locationText}.`;
+    const text = isSubstations ? `
+    Паводок: подтоплены ${formattedPoles} (${formattedPreviousPoles})* ${polesWord} ${formattedLines} (${formattedPreviousLines})* ${linesWord} ${voltageRange}, ${formattedSubstations} (${formattedPreviousSubstations})* ТП ${locationText}.` :
+    `Паводок: подтоплены ${formattedPoles} (${formattedPreviousPoles})* ${polesWord} ${formattedLines} (${formattedPreviousLines})* ${linesWord} ${voltageRange} ${locationText}.`;
 
     return {
         text,
