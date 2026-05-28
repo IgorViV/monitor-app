@@ -33,7 +33,6 @@ export function getChangeStatus(difference, isNew = false, isRemoved = false) {
  */
 export function compareData(currentData, previousData = {}) {
     const result = {};
-
     // Обходим все федеральные округа в текущих данных
     Object.keys(currentData).forEach(federalDistrict => {
         if (!result[federalDistrict]) {
@@ -73,6 +72,8 @@ export function compareData(currentData, previousData = {}) {
                     currentLines: currentCompany.totalLines,
                     previousLines: previousCompany ? previousCompany.totalLines : null,
                     voltageRange: currentCompany.voltageRange,
+                    currentSubstations: currentCompany.totalSubstations,
+                    previousSubstations: previousCompany ? previousCompany.totalSubstations : null,
                     difference,
                     status,
                     // Добавляем разницу для линий
@@ -84,6 +85,14 @@ export function compareData(currentData, previousData = {}) {
                         calculateDifference(
                             currentCompany.totalLines,
                             previousCompany ? previousCompany.totalLines : null
+                        ),
+                        isNew
+                    ),
+                    // Добавляем статус для подстанций
+                    substationsStatus: getChangeStatus(
+                        calculateDifference(
+                            currentCompany.totalSubstations,
+                            previousCompany ? previousCompany.totalSubstations : null
                         ),
                         isNew
                     )
@@ -116,6 +125,8 @@ export function compareData(currentData, previousData = {}) {
                         currentLines: null,
                         previousLines: previousCompany.totalLines,
                         voltageRange: previousCompany.voltageRange,
+                        currentSubstations: null,
+                        previousSubstations: previousCompany.totalSubstations,
                         difference,
                         status,
                         linesDifference: calculateDifference(null, previousCompany.totalLines),

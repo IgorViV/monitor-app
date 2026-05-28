@@ -214,7 +214,6 @@ function createFireSection(fireData) {
  */
 function createFloodSection(item) {
     const formatted = formatComparisonLine(item);
-
     const filialDiv = document.createElement('div');
     filialDiv.className = 'region-filial';
 
@@ -237,6 +236,15 @@ function createFloodSection(item) {
     dataP.appendChild(createComparisonSpan(formatted.previousLines, formatted.previousLinesClass));
     dataP.appendChild(document.createTextNode(')* '));
     dataP.appendChild(document.createTextNode(`${formatted.linesWord} ${formatted.voltageRange}`));
+
+    // Подстанции
+    if (formatted.currentSubstations > 0) {
+        dataP.appendChild(document.createTextNode(', '));
+        dataP.appendChild(createComparisonSpan(formatted.currentSubstations, formatted.currentSubstationsClass));
+        dataP.appendChild(document.createTextNode(' ('));
+        dataP.appendChild(createComparisonSpan(formatted.previousSubstations, formatted.previousSubstationsClass));
+        dataP.appendChild(document.createTextNode(')* ТП'));
+    }
 
     filialDiv.appendChild(dataP);
 
@@ -332,7 +340,6 @@ export function generateFullReport(container, mergedData) {
             const floodData = districtInfo.flood?.[region] || [];
             const fireDataArray = districtInfo.fire?.[region] || [];
             const fireData = fireDataArray.length > 0 ? fireDataArray[0] : null;
-
             const regionSection = createRegionSection(region, floodData, fireData);
             districtBlock.appendChild(regionSection);
         });
