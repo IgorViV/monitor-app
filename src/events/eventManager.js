@@ -1,4 +1,5 @@
 import { Modal, Toast } from 'bootstrap';
+import {exportToPDF, generatePrintableHTML} from "../renderer/pdfGenerator.js";
 
 export class EventManager {
     constructor(app) {
@@ -315,6 +316,9 @@ export class EventManager {
             // Генерируем и отображаем отчет
             this.app.renderReport(reportContainer);
 
+            // Генерируем PDF версию
+            // await this.generatePDFReport(); // TODO закомментировано на время отладки соседнего кода
+
             // Добавляем сводку перед отчетом
             const summaryHTML = this.app.getSummaryHTML();
 
@@ -364,6 +368,42 @@ export class EventManager {
             this.showNotification('Произошла ошибка при подготовке монитора', 'danger');
         } finally {
             this.showLoading(false);
+        }
+    }
+
+    /**
+     * Генерирует PDF отчет
+     */
+    async generatePDFReport() {
+        try {
+            // Создаем временный контейнер для PDF версии
+            const pdfContainer = document.createElement('div');
+            pdfContainer.id = 'pdf-container';
+            pdfContainer.style.cssText = 'position: absolute; left: -9999px; top: 0; width: 210mm;';
+            document.body.appendChild(pdfContainer);
+
+            // Генерируем HTML
+            const printableHTML = generatePrintableHTML(
+                this.app,
+                this.elements.nextDate?.value,
+                this.elements.prevDate?.value
+            );
+
+            pdfContainer.innerHTML = printableHTML;
+
+            // Ждем загрузки изображений
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Экспортируем в PDF
+            await exportToPDF(pdfContainer, `monitor-${this.app.getFormattedPreviousDate() || 'report'}.pdf`);
+
+            // Удаляем временный контейнер
+            document.body.removeChild(pdfContainer);
+
+            this.showNotification('PDF отчет сгенерирован', 'success');
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            this.showNotification('Ошибка при создании PDF', 'danger');
         }
     }
 
@@ -430,7 +470,16 @@ export class EventManager {
 
             // Отображаем предпросмотр в модальном окне
             const previewContainer = modalElement.querySelector('.modal-body');
-            previewApp.renderReport(previewContainer);
+            previewApp.renderReport(previewContainer); // TODO убрать рендер отчета из предпросмотра
+
+            // Генерируем HTML для печати
+            const printableHTML = generatePrintableHTML(
+                this.app,
+                this.elements.nextDate?.value,
+                this.elements.prevDate?.value
+            );
+
+            previewContainer.innerHTML = printableHTML;
 
             // Показываем модальное окно
             modal.show();

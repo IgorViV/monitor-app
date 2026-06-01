@@ -1,6 +1,7 @@
 import { REGION_TO_COLOR, INCIDENT_ICONS } from '../utils/constants';
 import { formatComparisonLine } from '../comparison/formatters';
-import { getWordForm, formatNumber } from '../utils/textUtils';
+import { getWordForm, formatNumber, getDistrictOrder, sortDistricts } from '../utils/textUtils';
+import { svgMap, svgLogo } from './svgElements.js';
 
 // Константы для группировки иконок
 const STORM_RELATED_ICONS = ['storm', 'wind', 'raine', 'health', 'thunderstorm'];
@@ -295,7 +296,7 @@ function createRegionSection(regionName, regionData = [], fireData = null) {
 function collectRegions(districtData) {
     const allRegions = new Set();
 
-    ['flood', 'fire', 'storm'].forEach(dataType => {
+    ['flood', 'fire'].forEach(dataType => {
         if (districtData[dataType]) {
             Object.keys(districtData[dataType]).forEach(region => allRegions.add(region));
         }
@@ -311,7 +312,6 @@ function collectRegions(districtData) {
  */
 export function generateFullReport(container, mergedData) {
     container.innerHTML = '';
-
     if (!mergedData || Object.keys(mergedData).length === 0) {
         const alert = document.createElement('div');
         alert.className = 'alert alert-info';
@@ -331,6 +331,7 @@ export function generateFullReport(container, mergedData) {
     districtKeys.forEach(district => {
         const districtInfo = districtData[district];
         if (!districtInfo) return;
+        if (isEmptyObject(districtInfo.flood) && isEmptyObject(districtInfo.fire)) return;
 
         const districtBlock = createDistrictHeader(district, districtInfo);
         // Собираем все регионы из всех типов данных
@@ -343,7 +344,6 @@ export function generateFullReport(container, mergedData) {
             const regionSection = createRegionSection(region, floodData, fireData);
             districtBlock.appendChild(regionSection);
         });
-
         container.appendChild(districtBlock);
     });
 
@@ -352,6 +352,19 @@ export function generateFullReport(container, mergedData) {
         mergedData._fireSummary = fireSummary;
     }
 }
+
+/**
+ * Проверяет, является ли значение пустым объектом
+ * @param value
+ * @return {boolean}
+ */
+function isEmptyObject(value) {
+    return typeof value === 'object' &&
+        value !== null &&
+        !Array.isArray(value) &&
+        Object.keys(value).length === 0;
+}
+
 
 // Экспорт для тестирования
 export {
