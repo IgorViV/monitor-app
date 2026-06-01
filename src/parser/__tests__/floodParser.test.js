@@ -23,7 +23,7 @@ const sampleInput = `В электросетевом комплексе «Рос
 
 describe('parseFloodLine', () => {
     it('should parse simple case without breakdown', () => {
-        const line = '«Волга» (Чувашэнерго. Чувашская Республика): 2 опоры 1 ЛЭП 110 кВ (уровень вод 50 см, талые воды)';
+        const line = '«Волга» (Чувашэнерго. Чувашская Республика): 2 опоры 1 ЛЭП 110 кВ, 2 ТП (уровень вод 50 см, талые воды)';
         const result = parseFloodLine(line);
 
         expect(result).toEqual({
@@ -32,6 +32,7 @@ describe('parseFloodLine', () => {
             totalPoles: 2,
             totalLines: 1,
             voltageRange: '110 кВ',
+            totalSubstations: 2,
             breakdown: []
         });
     });

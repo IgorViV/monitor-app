@@ -40,8 +40,8 @@ export function getPreviousValueClass() {
  */
 export function formatComparisonLine(item) {
     const polesWord = getWordForm(item.currentPoles || 0, 'опора');
-    const linesWord = 'ВЛ';
-
+    const linesWord = 'ЛЭП';
+    const substationWord = 'ТП';
     // Форматируем текущие значения с цветами
     const currentPolesFormatted = formatNumber(item.currentPoles || 0);
     const previousPoles = item.previousPoles !== null && item.previousPoles !== undefined
@@ -51,6 +51,11 @@ export function formatComparisonLine(item) {
     const currentLinesFormatted = formatNumber(item.currentLines || 0);
     const previousLines = item.previousLines !== null && item.previousLines !== undefined
         ? formatNumber(item.previousLines)
+        : '0';
+
+    const currentSubstationsFormatted = formatNumber(item.currentSubstations || 0);
+    const previousSubstations = item.previousSubstations !== null && item.previousSubstations !== undefined
+        ? formatNumber(item.previousSubstations)
         : '0';
 
     return {
@@ -66,6 +71,12 @@ export function formatComparisonLine(item) {
         linesWord,
         currentLinesClass: getCurrentValueClass(item.linesStatus),
         previousLinesClass: getPreviousValueClass(),
+
+        currentSubstations: currentSubstationsFormatted,
+        previousSubstations,
+        substationWord,
+        currentSubstationsClass: getCurrentValueClass(item.substationsStatus),
+        previousSubstationsClass: getPreviousValueClass(),
 
         voltageRange: item.voltageRange,
         status: item.status,

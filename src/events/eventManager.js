@@ -495,7 +495,7 @@ export class EventManager {
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         const modalElement = document.getElementById('preview-modal');
 
-        // Добавляем обработчик печати
+        // Добавляем обработчик печати // TODO подумать нужна печать из модального окна или нет
         modalElement.querySelector('#btn-print-preview')?.addEventListener('click', () => {
             window.print();
         });
