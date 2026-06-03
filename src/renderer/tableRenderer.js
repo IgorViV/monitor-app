@@ -1,6 +1,6 @@
 import { REGION_TO_COLOR, INCIDENT_ICONS } from '../utils/constants';
 import { formatComparisonLine } from '../comparison/formatters';
-import { getWordForm, formatNumber, getDistrictOrder, sortDistricts } from '../utils/textUtils';
+import { getWordForm, formatNumber, sortDistricts } from '../utils/textUtils';
 import { svgMap, svgLogo } from './svgElements.js';
 
 // Константы для группировки иконок
@@ -323,10 +323,10 @@ export function generateFullReport(container, mergedData) {
     // Безопасно извлекаем служебные ключи, не мутируя исходный объект
     const { _fireSummary: fireSummary, ...districtData } = mergedData;
 
-    // Фильтруем только обычные ключи (федеральные округа)
-    const districtKeys = Object.keys(districtData)
-        .filter(key => !key.startsWith('_'))
-        .sort();
+    // Сортируем округа в заданном порядке
+    const districtKeys = sortDistricts(
+        Object.keys(districtData).filter(key => !key.startsWith('_'))
+    );
 
     districtKeys.forEach(district => {
         const districtInfo = districtData[district];
