@@ -235,7 +235,7 @@ export function parseStormData(text) {
     });
 
     // Выводим в консоль для отладки
-    console.log('=== Штормовые предупреждения ===');
+    console.log('=== Штормовые предупреждения для отладки ===');
     stormWarnings.forEach(warning => {
         const formatted = formatCategories(warning.categories);
         console.log(`${warning.region}: ${formatted || 'неизвестные явления'}.`);
