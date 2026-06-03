@@ -5,6 +5,8 @@ import './styles/comparison.css';
 import './styles/tables.css';
 import './styles/components.css';
 import './styles/notifications.css';
+import './styles/district-tables.css';
+import './styles/summary.css';
 import './styles/responsive.css';
 import { MonitorApp } from './app';
 import { EventManager } from './events/eventManager';

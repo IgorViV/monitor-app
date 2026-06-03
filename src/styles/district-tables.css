@@ -1,11 +1,12 @@
 /* Контейнер федерального округа */
 .district-content {
-    width: 50%;
+    /*width: 50%;*/
     margin-bottom: 2rem;
     /*border: 1px solid #dee2e6;*/
     /*border-radius: 8px;*/
     overflow: hidden;
     /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);*/
+    font-size: 0.75rem;
 }
 
 /* Заголовок федерального округа */
@@ -17,9 +18,10 @@
     padding: 5px;
     margin: 0;
     /*font-size: 1.1rem;*/
-    font-size: 1rem;
+    /*font-size: 1rem;*/
+    font-size: 0.75rem;
     font-weight: 700;
-    color: #333;
+    /*color: #333;*/
     /*border-bottom: 2px solid rgba(0, 0, 0, 0.1);*/
 }
 
@@ -60,9 +62,10 @@
 }
 
 .region-title {
-    font-size: 1rem;
+    /*font-size: 1rem;*/
+    font-size: 0.75rem;
     font-weight: 600;
-    color: #495057;
+    /*color: #495057;*/
     /*margin-bottom: 12px;*/
     /*padding-bottom: 8px;*/
     /*border-bottom: 1px dashed #dee2e6;*/
@@ -91,13 +94,13 @@
 
 .region-filial p:first-child {
     font-weight: 600;
-    color: #333;
-    font-size: 0.95rem;
+    /*color: #333;*/
+    font-size: 0.75rem;
 }
 
 .region-filial p:last-child {
-    color: #555;
-    font-size: 0.9rem;
+    /*color: #555;*/
+    font-size: 0.75rem;
 }
 
 /* Цвета для значений */
@@ -108,18 +111,18 @@
 
 .color-green {
     color: #198754 !important;
-    font-weight: 600;
+    /*font-weight: 600;*/
 }
 
 .color-black {
     color: #212529 !important;
-    font-weight: 500;
+    /*font-weight: 500;*/
 }
 
 .color-grey {
     color: #6c757d !important;
-    font-weight: 400;
-    font-size: 0.9em;
+    /*font-weight: 400;*/
+    /*font-size: 0.75em;*/
 }
 
 /* Иконка в заголовке филиала */
@@ -140,9 +143,9 @@
 }
 
 .fire-title {
-    color: #fd7e14;
+    /*color: #fd7e14;*/
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     /*margin-bottom: 4px;*/
 }
 
@@ -175,7 +178,7 @@
     .district-content {
         break-inside: avoid;
         box-shadow: none;
-        border: 1px solid #ccc;
+        /*border: 1px solid #ccc;*/
     }
 
     .district-title {
