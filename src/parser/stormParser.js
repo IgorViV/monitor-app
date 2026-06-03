@@ -16,7 +16,7 @@ function extractRegionName(line) {
     let normalRegionNames = [];
     // Паттерны для извлечения региона
     const patterns = [
-        /(?:в|на)\s+(.+?)\s+(?:сильный|ливень|гроза|град|ветер|ожидаются|подъем|аномально жаркая погода|в горах сильные дожди|осадки)/i,
+        /(?:в|на)\s+(.+?)\s+(?:сильный|ливень|ливни|гроза|град|ветер|ожидаются|подъем|аномально жаркая погода|в горах сильные дожди|осадки)/i,
         /(?:в|на)\s+(.+?)$/i,
     ];
     // (дождь, мокрый снег, снег)
@@ -235,7 +235,7 @@ export function parseStormData(text) {
     });
 
     // Выводим в консоль для отладки
-    console.log('=== Штормовые предупреждения ===');
+    console.log('=== Штормовые предупреждения для отладки ===');
     stormWarnings.forEach(warning => {
         const formatted = formatCategories(warning.categories);
         console.log(`${warning.region}: ${formatted || 'неизвестные явления'}.`);
