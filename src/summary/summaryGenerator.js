@@ -597,9 +597,11 @@ export function generateFullSummary(
     previousFireSummary = null
 ) {
     const parts = [];
+    let isFloodData = floodData && Object.keys(floodData).length > 0;
+    let isFireData = fireSummary && (fireSummary.currentFires > 0 || fireSummary.currentArea > 0);
 
     // Сводка по паводкам - возвращает только HTML строку с <p>
-    if (floodData && Object.keys(floodData).length > 0) {
+    if (isFloodData) {
         const floodSummaryResult = generateFloodSummary(
             floodData,
             previousData.flood || null,
@@ -608,10 +610,12 @@ export function generateFullSummary(
         if (floodSummaryResult && floodSummaryResult.html) {
             parts.push(floodSummaryResult.html);
         }
+    } else {
+        parts.push('<p class="summary-text"><strong>Паводки:</strong> подтопленного оборудования нет.</p>');
     }
 
     // Сводка по пожарам - возвращает только HTML строку с <p>
-    if (fireSummary && (fireSummary.currentFires > 0 || fireSummary.currentArea > 0)) {
+    if (isFireData) {
         const fireSummaryResult = generateFireSummary(
             fireSummary,
             previousFireSummary || previousData.fireSummary || null,
@@ -620,6 +624,8 @@ export function generateFullSummary(
         if (fireSummaryResult && fireSummaryResult.html) {
             parts.push(fireSummaryResult.html);
         }
+    } else {
+        parts.push('<p class="summary-text"><strong>Пожары:</strong> действующих природных пожаров не зафиксировано.</p>');
     }
 
     // Если нет данных - возвращаем пустой массив
@@ -629,13 +635,13 @@ export function generateFullSummary(
 
     // Формируем единую сноску
     let footnoteHTML = '';
-    if (previousDate) {
+    if (previousDate && (isFloodData || isFireData)) {
         footnoteHTML = `
       <p class="summary-footnote">
         <small class="text-muted">*в скобках указана информация на ${previousDate}</small>
       </p>
     `;
-    } else {
+    } else if (isFloodData || isFireData) {
         footnoteHTML = `
       <p class="summary-footnote">
         <small class="text-muted">*в скобках указана информация за предыдущий период</small>

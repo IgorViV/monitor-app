@@ -42,9 +42,7 @@ export function parseFireData(text) {
                     regionData = {
                         region: normalizeRegionName(simpleMatch[1].trim()),
                         currentFires: parseNumber(simpleMatch[2]),
-                        // previousFires: 0,
                         currentArea: parseNumber(simpleMatch[3]),
-                        // previousArea: 0,
                     };
                 }
             }
@@ -100,7 +98,6 @@ export function parseFireSummary(text) {
     if (!text || !text.trim()) {
         return null;
     }
-
     const cleanText = text.trim();
 
     // Паттерн: "На территории России зафиксированы 8 (27 ) очагов пожаров на общей площади 73 075 (63 566) га"
@@ -111,28 +108,9 @@ export function parseFireSummary(text) {
     if (summaryMatch) {
         return {
             currentFires: parseNumber(summaryMatch[1]),
-            // previousFires: parseNumber(summaryMatch[2]),
-            // previousFires: 0,
             currentArea: parseNumber(summaryMatch[3]),
-            // previousArea: parseNumber(summaryMatch[4]),
-            // previousArea: 0,
         };
     }
-
-    // Паттерн без площади: "зафиксированы 8 (27) очагов пожаров"
-    // const simpleMatch = cleanText.match(
-    //     /зафиксированы?\s+(\d+(?:\s*\d+)*)\s*\((\d+(?:\s*\d+)*)\s*\)\s*очаг(?:ов|а)?\s+пожаров/i
-    // );
-    //
-    // if (simpleMatch) {
-    //     return {
-    //         currentFires: parseNumber(simpleMatch[1]),
-    //         // previousFires: parseNumber(simpleMatch[2]),
-    //         previousFires: 0,
-    //         currentArea: 0,
-    //         previousArea: 0,
-    //     };
-    // }
 
     return null;
 }

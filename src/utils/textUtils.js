@@ -1,4 +1,4 @@
-import { REGION_TO_FEDERAL_DISTRICT } from "./constants.js";
+import { REGION_TO_FEDERAL_DISTRICT, FEDERAL_DISTRICTS_ORDER } from "./constants.js";
 
 /**
  * Возвращает федеральный округ по региону
@@ -203,3 +203,21 @@ export const parseLine = (str) => {
 
     return null;
 }
+
+/**
+ * Получает индекс федерального округа для сортировки
+ */
+export function getDistrictOrder(districtName) {
+    const index = FEDERAL_DISTRICTS_ORDER.indexOf(districtName);
+    return index === -1 ? FEDERAL_DISTRICTS_ORDER.length : index;
+}
+
+/**
+ * Сортирует федеральные округа в заданном порядке
+ */
+export function sortDistricts(districts) {
+    return [...districts].sort((a, b) => {
+        return getDistrictOrder(a) - getDistrictOrder(b);
+    });
+}
+

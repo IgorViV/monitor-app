@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseStormData, parseStormLine, detectWeatherPhenomena, formatCategories } from '../stormParser';
+import { parseStormData, parseStormLine, detectWeatherPhenomena, formatCategories, extractRegionName } from '../stormParser';
 
 describe('Storm Parser', () => {
     const sampleInput = `22 апреля в Свердловской области, 23 апреля в Пермском крае сильный снег, сильный гололед, сильное отложение мокрого снега;
@@ -56,5 +56,19 @@ describe('Storm Parser', () => {
         const krasnodar = result.rawWarnings.find(w => w.region === 'Краснодарский край');
         expect(formatCategories(krasnodar.categories)).toContain('сильные осадки с грозой');
         expect(formatCategories(krasnodar.categories)).toContain('сильный ветер');
+    });
+});
+
+describe('extractRegionName', () => {
+    it('should extract region name correctly', () => {
+        const samplesInput = [
+            '2 июня в Волгоградской области ливни, гроза, град, ветер 20-25 м/с.',
+            '24-26 мая в Волгоградской области сильный дождь, ливневый дождь, гроза, град, ветер 20-25 м/с;',
+            ];
+
+        samplesInput.forEach(sampleInput => {
+            const result = extractRegionName(sampleInput);
+            expect(result).toContain('Волгоградская область');
+        });
     });
 });

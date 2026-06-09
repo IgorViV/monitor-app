@@ -1,0 +1,90 @@
+.printable-report {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 11pt;
+    line-height: 1.4;
+    color: #333;
+    padding: 15mm;
+    max-width: 210mm;
+    margin: 0 auto;
+}
+
+.report-header {
+    text-align: center;
+    margin-bottom: 10mm;
+    border-bottom: 2px solid #333;
+    padding-bottom: 5mm;
+}
+
+.report-title {
+    font-size: 16pt;
+    font-weight: 700;
+    margin: 0 0 4mm 0;
+    text-transform: uppercase;
+}
+
+.report-date {
+    font-size: 11pt;
+    color: #666;
+    margin: 0;
+}
+
+.report-summary {
+    margin-bottom: 8mm;
+    padding: 5mm;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.report-summary h2 {
+    font-size: 13pt;
+    margin: 0 0 3mm 0;
+    color: #0d6efd;
+}
+
+.report-map-container {
+    margin-bottom: 8mm;
+}
+
+.map-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 170mm;
+    margin: 0 auto;
+}
+
+.storm-map-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.district-title-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    break-inside: avoid;
+}
+
+.district-icon-small {
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+}
+
+.region-block {
+    break-inside: avoid;
+}
+
+@media print {
+    body {
+        background: white;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .printable-report {
+        padding: 0;
+    }
+}

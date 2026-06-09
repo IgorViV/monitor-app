@@ -14,7 +14,6 @@ export function createSummaryElement(summaryItem) {
         p.textContent = summaryItem.text;
         container.appendChild(p);
     }
-
     return container;
 }
 

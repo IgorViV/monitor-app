@@ -1,6 +1,7 @@
 import { REGION_TO_COLOR, INCIDENT_ICONS } from '../utils/constants';
 import { formatComparisonLine } from '../comparison/formatters';
-import { getWordForm, formatNumber } from '../utils/textUtils';
+import { getWordForm, formatNumber, sortDistricts } from '../utils/textUtils';
+import { svgMap, svgLogo } from './svgElements.js';
 
 // Константы для группировки иконок
 const STORM_RELATED_ICONS = ['storm', 'wind', 'raine', 'health', 'thunderstorm'];
@@ -110,6 +111,7 @@ function createDistrictHeader(districtName, mergedDistrictData) {
     title.className = 'district-title';
 
     title.style.backgroundColor = REGION_TO_COLOR[districtName] || '#f5f5f5';
+    title.style.backgroundColor = title.style.backgroundColor.replace('rgb', 'rgba').replace(')', ', 0.5)');
 
     const titleSpan = document.createElement('span');
     titleSpan.textContent = districtName;
@@ -295,7 +297,7 @@ function createRegionSection(regionName, regionData = [], fireData = null) {
 function collectRegions(districtData) {
     const allRegions = new Set();
 
-    ['flood', 'fire', 'storm'].forEach(dataType => {
+    ['flood', 'fire'].forEach(dataType => {
         if (districtData[dataType]) {
             Object.keys(districtData[dataType]).forEach(region => allRegions.add(region));
         }
@@ -311,7 +313,6 @@ function collectRegions(districtData) {
  */
 export function generateFullReport(container, mergedData) {
     container.innerHTML = '';
-
     if (!mergedData || Object.keys(mergedData).length === 0) {
         const alert = document.createElement('div');
         alert.className = 'alert alert-info';
@@ -323,14 +324,15 @@ export function generateFullReport(container, mergedData) {
     // Безопасно извлекаем служебные ключи, не мутируя исходный объект
     const { _fireSummary: fireSummary, ...districtData } = mergedData;
 
-    // Фильтруем только обычные ключи (федеральные округа)
-    const districtKeys = Object.keys(districtData)
-        .filter(key => !key.startsWith('_'))
-        .sort();
+    // Сортируем округа в заданном порядке
+    const districtKeys = sortDistricts(
+        Object.keys(districtData).filter(key => !key.startsWith('_'))
+    );
 
     districtKeys.forEach(district => {
         const districtInfo = districtData[district];
         if (!districtInfo) return;
+        if (isEmptyObject(districtInfo.flood) && isEmptyObject(districtInfo.fire)) return;
 
         const districtBlock = createDistrictHeader(district, districtInfo);
         // Собираем все регионы из всех типов данных
@@ -343,7 +345,6 @@ export function generateFullReport(container, mergedData) {
             const regionSection = createRegionSection(region, floodData, fireData);
             districtBlock.appendChild(regionSection);
         });
-
         container.appendChild(districtBlock);
     });
 
@@ -352,6 +353,19 @@ export function generateFullReport(container, mergedData) {
         mergedData._fireSummary = fireSummary;
     }
 }
+
+/**
+ * Проверяет, является ли значение пустым объектом
+ * @param value
+ * @return {boolean}
+ */
+function isEmptyObject(value) {
+    return typeof value === 'object' &&
+        value !== null &&
+        !Array.isArray(value) &&
+        Object.keys(value).length === 0;
+}
+
 
 // Экспорт для тестирования
 export {
