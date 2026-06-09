@@ -6,7 +6,7 @@
     margin-bottom: 2rem;
     /*border: 1px solid #dee2e6;*/
     /*border-radius: 8px;*/
-    overflow: hidden;
+    /*overflow: hidden;*/
     /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);*/
     /*font-size: 0.75rem;*/
     font-size: 11px;
@@ -18,7 +18,7 @@
     justify-content: space-between;
     align-items: center;
     /*padding: 12px 16px;*/
-    padding: 5px;
+    padding: 2px;
     margin: 0;
     /*font-size: 1.1rem;*/
     /*font-size: 1rem;*/
@@ -37,7 +37,7 @@
 /* Контейнер иконок */
 .district-icons-container {
     display: flex;
-    gap: 8px;
+    gap: 2px;
     align-items: center;
 }
 

@@ -343,7 +343,7 @@ export class EventManager {
             }
 
             // Генерируем и отображаем отчет
-            this.app.renderReport(reportContainer);
+            // this.app.renderReport(reportContainer); // TODO закомментировано на время отладки соседнего кода
 
             // Генерируем PDF версию
             // await this.generatePDFReport(); // TODO закомментировано на время отладки соседнего кода
@@ -352,10 +352,15 @@ export class EventManager {
             const summaryHTML = this.app.getSummaryHTML();
 
             // Создаем страницу карты
-            const mapPage = this.createMapPage(); // TODO: подумать над этой функцией
+            const mapPage = this.createMapPage();
             const mapMainContainer = mapPage.querySelector('.map-main-container');
             mapMainContainer.insertAdjacentHTML('afterbegin', summaryHTML);
-            document.getElementById('main').appendChild(mapPage); // TODO: убрать после реализации pdf отчета
+            const mapDistrictContainer = mapPage.querySelector('.map-district-container');
+            this.app.renderReport(mapDistrictContainer);
+            // document.getElementById('main').appendChild(mapPage); // TODO: убрать после реализации pdf отчета
+
+            // Генерируем PDF версию
+            await this.generatePDFReport(mapPage);
 
             if (summaryHTML && reportContainer) {
                 // Удаляем старый summary-container если есть
@@ -365,15 +370,15 @@ export class EventManager {
                 }
 
                 // Создаем новый summary-container
-                const summaryContainer = this.createSummaryContainer();
-                summaryContainer.innerHTML = summaryHTML;
-
-                // Вставляем сводку перед таблицами округов
-                if (reportContainer.firstChild) {
-                    reportContainer.insertBefore(summaryContainer, reportContainer.firstChild);
-                } else {
-                    reportContainer.appendChild(summaryContainer);
-                }
+                // const summaryContainer = this.createSummaryContainer(); // TODO: убрать после полной реализации pdf отчета
+                // summaryContainer.innerHTML = summaryHTML;
+                //
+                // // Вставляем сводку перед таблицами округов
+                // if (reportContainer.firstChild) {
+                //     reportContainer.insertBefore(summaryContainer, reportContainer.firstChild);
+                // } else {
+                //     reportContainer.appendChild(summaryContainer);
+                // }
             }
 
             // Скроллим к отчету
@@ -409,12 +414,13 @@ export class EventManager {
     /**
      * Генерирует PDF отчет
      */
-    async generatePDFReport() {
+    async generatePDFReport(mapPage) {
         try {
             // Создаем временный контейнер для PDF версии
             const pdfContainer = document.createElement('div');
             pdfContainer.id = 'pdf-container';
-            pdfContainer.style.cssText = 'position: absolute; left: -9999px; top: 0; width: 210mm;';
+            pdfContainer.style.cssText = 'width: 297mm; height: 210mm;';
+            pdfContainer.appendChild(mapPage);
             document.body.appendChild(pdfContainer);
 
             // Генерируем HTML
@@ -423,14 +429,13 @@ export class EventManager {
                 this.elements.nextDate?.value,
                 this.elements.prevDate?.value
             );
-
-            pdfContainer.innerHTML = printableHTML;
+            // pdfContainer.innerHTML = printableHTML;
 
             // Ждем загрузки изображений
             await new Promise(resolve => setTimeout(resolve, 500));
 
             // Экспортируем в PDF
-            await exportToPDF(pdfContainer, `monitor-${this.app.getFormattedPreviousDate() || 'report'}.pdf`);
+            await exportToPDF(pdfContainer, `monitor-${this.formatDate(this.elements.nextDate?.value) || 'report'}.pdf`);
 
             // Удаляем временный контейнер
             document.body.removeChild(pdfContainer);

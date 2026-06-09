@@ -274,23 +274,38 @@ export async function exportToPDF(htmlElement, filename = 'monitor.pdf') {
             scale: 2,
             useCORS: true,
             logging: false,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
         });
 
         const imgData = canvas.toDataURL('image/png');
-        const imgWidth = 210; // A4 width in mm
-        const pageHeight = 297; // A4 height in mm
+
+        // A4 альбомный формат: 297mm x 210mm
+        const pageWidth = 297;
+        const pageHeight = 210;
+
+        // Рассчитываем размеры изображения
+        const imgWidth = pageWidth;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        const pdf = new jsPDF('p', 'mm', 'a4');
+
+        // Создаем PDF в альбомной ориентации
+        const pdf = new jsPDF({
+            orientation: 'landscape',
+            unit: 'mm',
+            format: 'a4',
+        });
+
         let heightLeft = imgHeight;
         let position = 0;
 
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        // Добавляем первую страницу
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, Math.min(imgHeight, pageHeight));
         heightLeft -= pageHeight;
 
-        // Добавляем новые страницы если не помещается
+        // Добавляем дополнительные страницы если нужно
         while (heightLeft > 0) {
-            position = heightLeft - imgHeight;
+            position = -pageHeight; // Сдвиг для следующей страницы
             pdf.addPage();
             pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
             heightLeft -= pageHeight;
