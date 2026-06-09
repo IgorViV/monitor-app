@@ -69,7 +69,7 @@ export class EventManager {
     createReportContainer() {
         const container = document.createElement('div');
         container.id = 'report-container';
-        container.className = 'mt-4';
+        // container.className = 'mt-4';
 
         const main = document.querySelector('main');
         if (main) {
@@ -81,8 +81,32 @@ export class EventManager {
                 main.appendChild(container);
             }
         }
-
         return container;
+    }
+
+    /**
+     * Создаем страницу отчета Монитора
+     * @return {HTMLElement} - Страница отчета Монитора
+     */
+    createMapPage() {
+        const templateMap = document.getElementById('template-map');
+        const templateMapContent = templateMap.content;
+        const mapPage = templateMapContent.cloneNode(true);
+        const nextDate = this.elements.nextDate?.value;
+        const mapTitleDate = mapPage.querySelector('.map-title-date');
+        mapTitleDate.textContent = `${this.formatDate(nextDate)}`;
+
+        return mapPage;
+    }
+
+    /**
+     * Форматирует дату
+     * @param dateString {string} - Дата в формате YYYY-MM-DD
+     * @return {string} - Дата в формате DD.MM.YYYY
+     */
+    formatDate(dateString) {
+        const [year, month, day] = dateString.split('-');
+        return `${day}.${month}.${year}`;
     }
 
     /**
@@ -313,6 +337,11 @@ export class EventManager {
                 reportContainer.innerHTML = '';
             }
 
+            // Удаляем старую карту, если есть
+            if (document.querySelector('.map-container')) {
+                document.querySelector('.map-container').remove();
+            }
+
             // Генерируем и отображаем отчет
             this.app.renderReport(reportContainer);
 
@@ -321,6 +350,12 @@ export class EventManager {
 
             // Добавляем сводку перед отчетом
             const summaryHTML = this.app.getSummaryHTML();
+
+            // Создаем страницу карты
+            const mapPage = this.createMapPage(); // TODO: подумать над этой функцией
+            const mapMainContainer = mapPage.querySelector('.map-main-container');
+            mapMainContainer.insertAdjacentHTML('afterbegin', summaryHTML);
+            document.getElementById('main').appendChild(mapPage); // TODO: убрать после реализации pdf отчета
 
             if (summaryHTML && reportContainer) {
                 // Удаляем старый summary-container если есть
@@ -470,7 +505,7 @@ export class EventManager {
 
             // Отображаем предпросмотр в модальном окне
             const previewContainer = modalElement.querySelector('.modal-body');
-            previewApp.renderReport(previewContainer); // TODO убрать рендер отчета из предпросмотра
+            previewApp.renderReport(previewContainer);
 
             // Генерируем HTML для печати
             const printableHTML = generatePrintableHTML(
@@ -574,7 +609,7 @@ export class EventManager {
     }
 
     /**
-     * Проверяет, есть ли данные для потери
+     * Проверяет, есть ли данные которые можно потерять
      */
     hasDataToLose() {
         const textareas = document.querySelectorAll('textarea');
