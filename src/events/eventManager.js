@@ -345,9 +345,6 @@ export class EventManager {
             // Генерируем и отображаем отчет
             // this.app.renderReport(reportContainer); // TODO закомментировано на время отладки соседнего кода
 
-            // Генерируем PDF версию
-            // await this.generatePDFReport(); // TODO закомментировано на время отладки соседнего кода
-
             // Добавляем сводку перед отчетом
             const summaryHTML = this.app.getSummaryHTML();
 
@@ -356,11 +353,13 @@ export class EventManager {
             const mapMainContainer = mapPage.querySelector('.map-main-container');
             mapMainContainer.insertAdjacentHTML('afterbegin', summaryHTML);
             const mapDistrictContainer = mapPage.querySelector('.map-district-container');
+            const mapIconsContainer = mapPage.querySelector('#icons-use');
             this.app.renderReport(mapDistrictContainer);
-            // document.getElementById('main').appendChild(mapPage); // TODO: убрать после реализации pdf отчета
+            this.app.renderIcons(mapIconsContainer);
+            document.getElementById('main').appendChild(mapPage); // TODO: убрать после реализации pdf отчета
 
             // Генерируем PDF версию
-            await this.generatePDFReport(mapPage);
+            // await this.generatePDFReport(mapPage); // TODO: закомментировано на время отладки соседнего кода
 
             if (summaryHTML && reportContainer) {
                 // Удаляем старый summary-container если есть

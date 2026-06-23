@@ -1,17 +1,17 @@
 /* Обычное начертание (Regular) */
 @font-face {
-    font-family: 'Roboto Condensed';
+    font-family: 'PFDin';
     font-style: normal;
     font-weight: 400;
-    src: url('public/fonts/RobotoCondensed-Regular.ttf') format('truetype');
+    src: url('public/fonts/PFDinTextCondPro Light.ttf') format('truetype');
 }
 
 /* Жирное начертание (Bold) */
 @font-face {
-    font-family: 'Roboto Condensed';
+    font-family: 'PFDin';
     font-style: normal;
     font-weight: 700;
-    src: url('public/fonts/RobotoCondensed-Bold.ttf') format('truetype');
+    src: url('public/fonts/PFDinTextCondPro Medium.ttf') format('truetype');
 }
 
 :root {
@@ -29,12 +29,12 @@
 
 /* Базовые стили */
 body {
-    font-family: 'Roboto Condensed', sans-serif;
+    font-family: 'PFDin', sans-serif;
     background-color: #f8f9fa;
 }
 
 h1, h2, h3, h4, h5, h6, p {
-    font-family: 'Roboto Condensed', sans-serif;
+    font-family: 'PFDin', sans-serif;
 }
 
 /* Стили для плейсхолдеров */

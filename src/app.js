@@ -4,6 +4,7 @@ import { parseStormData } from './parser/stormParser';
 import { compareData, mergeComparisonResults, compareFireData } from './comparison/dataComparator';
 import { generateFullSummary, generateFloodSummary, generateFireSummary } from './summary/summaryGenerator';
 import { generateFullReport } from './renderer/tableRenderer';
+import { generateIcon } from './renderer/iconGenerator.js';
 
 
 export class MonitorApp {
@@ -176,6 +177,24 @@ export class MonitorApp {
         }
 
         generateFullReport(container, report);
+    }
+
+    renderIcons(containerIcons) {
+        if (!containerIcons) {
+            console.error('Container icons element is required');
+            return;
+        }
+
+        const report = this.generateReport();
+
+        // Проверяем, есть ли данные для отображения
+        if (!report || Object.keys(report).length === 0) {
+            console.error('Report data is required');
+            return;
+        }
+
+        // console.log(generateIcon(report).join('\n'));
+        containerIcons.innerHTML = generateIcon(report).join('\n');
     }
 
     getSummary() {
