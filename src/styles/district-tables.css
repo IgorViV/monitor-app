@@ -1,14 +1,10 @@
 /* Контейнер федерального округа */
 .district-content {
     display: inline-block;
-    /*width: 50%;*/
-    width: 205px;
-    /*margin-bottom: 2rem;*/
-    /*border: 1px solid #dee2e6;*/
-    /*border-radius: 8px;*/
-    /*overflow: hidden;*/
-    /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);*/
-    /*font-size: 0.75rem;*/
+    width: 200px;
+    min-width: 200px;
+    margin: 0;
+    padding: 0;
     font-size: 11px;
 }
 
@@ -17,34 +13,22 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /*padding: 12px 16px;*/
     padding: 2px;
     margin: 0;
-    /*font-size: 1.1rem;*/
-    /*font-size: 1rem;*/
-    /*font-size: 0.75rem;*/
     font-size: 11px;
-    font-weight: 700;
-    /*color: #333;*/
-    /*border-bottom: 2px solid rgba(0, 0, 0, 0.1);*/
-}
-
-.district-title span {
-    /*text-transform: uppercase;*/
-    /*letter-spacing: 0.5px;*/
 }
 
 /* Контейнер иконок */
 .district-icons-container {
     display: flex;
-    gap: 2px;
+    gap: 1px;
     align-items: center;
 }
 
 .district-icon {
-    width: 12px;
-    height: 12px;
-    object-fit: contain;
+    /*width: 20px;*/
+    /*height: 20px;*/
+    /*object-fit: contain;*/
 }
 
 .district-icon.visually-hidden {
@@ -55,9 +39,7 @@
 
 /* Регион */
 .district-region {
-    /*padding: 16px;*/
     padding: 2px;
-    /*border-bottom: 1px solid #e9ecef;*/
 }
 
 .district-region:last-child {
@@ -66,140 +48,40 @@
 
 .region-title {
     margin: 0;
-    margin-bottom: 5px;
-    /*font-size: 1rem;*/
-    /*font-size: 0.75rem;*/
+    padding: 0;
     font-size: 11px;
-    font-weight: 600;
-    /*color: #495057;*/
-    /*margin-bottom: 12px;*/
-    /*padding-bottom: 8px;*/
-    /*border-bottom: 1px dashed #dee2e6;*/
 }
 
 /* Филиал (предприятие) */
 .region-filial {
     margin-bottom: 2px;
-    /*padding-left: 20px;*/
-    /*border-left: 3px solid #e9ecef;*/
-    /*transition: border-color 0.2s ease;*/
-}
-
-.region-filial:hover {
-    /*border-left-color: #0d6efd;*/
 }
 
 .region-filial:last-child {
     margin-bottom: 0;
 }
 
-.region-filial p {
-    /*margin-bottom: 4px;*/
-    line-height: 1.5;
-}
-
 .region-filial p:first-child {
-    /*font-weight: 600;*/
-    /*color: #333;*/
-    /*font-size: 0.75rem;*/
     font-size: 11px;
 }
 
 .region-filial p:last-child {
-    /*color: #555;*/
-    /*font-size: 0.75rem;*/
     font-size: 11px;
 }
 
 /* Цвета для значений */
 .color-red {
     color: #dc3545 !important;
-    font-weight: 600;
 }
 
 .color-green {
     color: #198754 !important;
-    /*font-weight: 600;*/
 }
 
 .color-black {
     color: #212529 !important;
-    /*font-weight: 500;*/
 }
 
 .color-grey {
     color: #6c757d !important;
-    /*font-weight: 400;*/
-    /*font-size: 0.75em;*/
-}
-
-/* Иконка в заголовке филиала */
-.incident-icon-small {
-    width: 16px;
-    height: 16px;
-    /*margin-right: 4px;*/
-    vertical-align: middle;
-}
-
-/* Стили для строки с пожарами */
-.fire-item {
-    /*border-left: 3px solid #fd7e14;*/
-    /*background-color: #fff8f3;*/
-    /*padding: 8px 12px;*/
-    /*padding: 5px;*/
-    /*margin-bottom: 5px;*/
-}
-
-.fire-title {
-    /*color: #fd7e14;*/
-    font-weight: 600;
-    /*font-size: 0.75rem;*/
-    font-size: 11px;
-    /*margin-bottom: 4px;*/
-}
-
-/* Разделитель между типами происшествий */
-.region-filial + .fire-item {
-    /*margin-top: 12px;*/
-    /*padding-top: 12px;*/
-    /*border-top: 1px dashed #dee2e6;*/
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-    .district-title {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-
-    .district-icons-container {
-        flex-wrap: wrap;
-    }
-
-    .region-filial {
-        /*padding-left: 12px;*/
-    }
-}
-
-/* Печать */
-@media print {
-    .district-content {
-        break-inside: avoid;
-        box-shadow: none;
-        /*border: 1px solid #ccc;*/
-    }
-
-    .district-title {
-        background-color: #f5f5f5 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    .color-red,
-    .color-green,
-    .color-grey {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
 }

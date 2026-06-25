@@ -52,7 +52,7 @@ export class EventManager {
             clearButtons: document.querySelectorAll('[data-clear-target]'),
 
             // Контейнер для отчета
-            reportContainer: document.getElementById('report-container') || this.createReportContainer(),
+            reportContainer: document.getElementById('report-container') || this.createReportContainer(), // TODO: ? map-container
 
             // Формы
             mainForm: document.forms['mainForm'],
@@ -345,9 +345,6 @@ export class EventManager {
             // Генерируем и отображаем отчет
             // this.app.renderReport(reportContainer); // TODO закомментировано на время отладки соседнего кода
 
-            // Генерируем PDF версию
-            // await this.generatePDFReport(); // TODO закомментировано на время отладки соседнего кода
-
             // Добавляем сводку перед отчетом
             const summaryHTML = this.app.getSummaryHTML();
 
@@ -356,11 +353,41 @@ export class EventManager {
             const mapMainContainer = mapPage.querySelector('.map-main-container');
             mapMainContainer.insertAdjacentHTML('afterbegin', summaryHTML);
             const mapDistrictContainer = mapPage.querySelector('.map-district-container');
+            const mapIconsContainer = mapPage.querySelector('#icons-use');
             this.app.renderReport(mapDistrictContainer);
-            // document.getElementById('main').appendChild(mapPage); // TODO: убрать после реализации pdf отчета
+            this.app.renderIcons(mapIconsContainer);
+            document.getElementById('main').appendChild(mapPage); // TODO: убрать после реализации pdf отчета
+
+            // Проверяем высоту контента округов
+            const currentDistrictContainer = document.querySelector('.map-district-container');
+            const contentDistricts = currentDistrictContainer.querySelectorAll('.district-content');
+
+            let startIndex = 0;
+            let heightColumns = [310, 310, 215, 215, 185];
+            const tempContainer = document.createElement('div');
+            tempContainer.classNmae = 'temp-container';
+
+            for (let i = 0; i < heightColumns.length; i++) {
+                let freeHeightColumn = heightColumns[i];
+                const districtColumn = document.createElement('div');
+                districtColumn.className = 'district-column';
+                for (let j = startIndex; j < contentDistricts.length; j++) {
+                    freeHeightColumn -= contentDistricts[j].clientHeight;
+                    if (freeHeightColumn <= 0) {
+                        break;
+                    }
+                    districtColumn.appendChild(contentDistricts[j]);
+                    startIndex++;
+                }
+                tempContainer.appendChild(districtColumn);
+            }
+            currentDistrictContainer.innerHTML = tempContainer.innerHTML;
+            tempContainer.remove();
+            //
 
             // Генерируем PDF версию
-            await this.generatePDFReport(mapPage); // TODO: закомментировано на время отладки соседнего кода
+            const mapContainer = document.querySelector('.map-container');
+            // await this.generatePDFReport(mapContainer); // TODO: закомментировано на время отладки соседнего кода
 
             if (summaryHTML && reportContainer) {
                 // Удаляем старый summary-container если есть
@@ -417,28 +444,28 @@ export class EventManager {
     async generatePDFReport(mapPage) {
         try {
             // Создаем временный контейнер для PDF версии
-            const pdfContainer = document.createElement('div');
-            pdfContainer.id = 'pdf-container';
-            pdfContainer.style.cssText = 'width: 297mm; height: 210mm;';
-            pdfContainer.appendChild(mapPage);
-            document.body.appendChild(pdfContainer);
+            // const pdfContainer = document.createElement('div');
+            // pdfContainer.id = 'pdf-container';
+            // pdfContainer.style.cssText = 'width: 297mm; height: 210mm;';
+            // pdfContainer.appendChild(mapPage);
+            // document.body.appendChild(pdfContainer);
 
             // Генерируем HTML
-            const printableHTML = generatePrintableHTML(
-                this.app,
-                this.elements.nextDate?.value,
-                this.elements.prevDate?.value
-            );
+            // const printableHTML = generatePrintableHTML(
+            //     this.app,
+            //     this.elements.nextDate?.value,
+            //     this.elements.prevDate?.value
+            // );
             // pdfContainer.innerHTML = printableHTML;
 
             // Ждем загрузки изображений
             await new Promise(resolve => setTimeout(resolve, 500));
 
             // Экспортируем в PDF
-            await exportToPDF(pdfContainer, `monitor-${this.formatDate(this.elements.nextDate?.value) || 'report'}.pdf`);
+            await exportToPDF(mapPage, `Монитор паводковой и пожарной обстановки на 06-00 ${this.formatDate(this.elements.nextDate?.value) || 'report'}.pdf`);
 
             // Удаляем временный контейнер
-            document.body.removeChild(pdfContainer);
+            // document.body.removeChild(pdfContainer);
 
             this.showNotification('PDF отчет сгенерирован', 'success');
         } catch (error) {
