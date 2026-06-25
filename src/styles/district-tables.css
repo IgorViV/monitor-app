@@ -3,7 +3,7 @@
     display: inline-block;
     /*width: 50%;*/
     width: 205px;
-    margin-bottom: 2rem;
+    /*margin-bottom: 2rem;*/
     /*border: 1px solid #dee2e6;*/
     /*border-radius: 8px;*/
     /*overflow: hidden;*/
@@ -30,8 +30,8 @@
 }
 
 .district-title span {
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    /*text-transform: uppercase;*/
+    /*letter-spacing: 0.5px;*/
 }
 
 /* Контейнер иконок */
@@ -42,10 +42,9 @@
 }
 
 .district-icon {
-    width: 24px;
-    height: 24px;
+    width: 12px;
+    height: 12px;
     object-fit: contain;
-    transition: opacity 0.3s ease;
 }
 
 .district-icon.visually-hidden {
@@ -57,7 +56,7 @@
 /* Регион */
 .district-region {
     /*padding: 16px;*/
-    padding: 5px;
+    padding: 2px;
     /*border-bottom: 1px solid #e9ecef;*/
 }
 
@@ -80,10 +79,10 @@
 
 /* Филиал (предприятие) */
 .region-filial {
-    margin-bottom: 5px;
+    margin-bottom: 2px;
     /*padding-left: 20px;*/
     /*border-left: 3px solid #e9ecef;*/
-    transition: border-color 0.2s ease;
+    /*transition: border-color 0.2s ease;*/
 }
 
 .region-filial:hover {
@@ -100,7 +99,7 @@
 }
 
 .region-filial p:first-child {
-    font-weight: 600;
+    /*font-weight: 600;*/
     /*color: #333;*/
     /*font-size: 0.75rem;*/
     font-size: 11px;

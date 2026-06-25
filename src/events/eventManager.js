@@ -360,7 +360,7 @@ export class EventManager {
             // document.getElementById('main').appendChild(mapPage); // TODO: убрать после реализации pdf отчета
 
             // Генерируем PDF версию
-            await this.generatePDFReport(mapPage);
+            await this.generatePDFReport(mapPage); // TODO: закомментировано на время отладки соседнего кода
 
             if (summaryHTML && reportContainer) {
                 // Удаляем старый summary-container если есть
