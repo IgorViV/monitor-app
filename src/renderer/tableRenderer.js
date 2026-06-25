@@ -313,6 +313,7 @@ function collectRegions(districtData) {
  */
 export function generateFullReport(container, mergedData) {
     container.innerHTML = '';
+    // container.classList.add('visually-hidden'); // TODO: remove
     if (!mergedData || Object.keys(mergedData).length === 0) {
         const alert = document.createElement('div');
         alert.className = 'alert alert-info';
@@ -365,7 +366,6 @@ function isEmptyObject(value) {
         !Array.isArray(value) &&
         Object.keys(value).length === 0;
 }
-
 
 // Экспорт для тестирования
 export {

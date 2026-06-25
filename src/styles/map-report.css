@@ -3,8 +3,7 @@
     width: 297mm;
     height: 210mm;
     margin: 0 auto;
-    padding: 5px;
-    padding-top: 70px;
+    padding: 70px 5px 5px 5px;
 }
 
 .map-svg {
@@ -24,7 +23,7 @@
     height: 210mm;
     margin: 0;
     padding: 0;
-    /*background-color: rgba(255, 255, 255, 0.4);*/
+    /*background-color: rgba(255, 255, 255, 0.2);*/
 }
 
 .map-header {
@@ -127,31 +126,37 @@
 
 .map-district-container {
     display: flex;
-    flex-direction: row;
-    gap: 5px;
     align-items: flex-start;
+    gap: 5px;
     width: 297mm;
     height: 310px;
     margin: 0;
     padding: 5px;
+    overflow: hidden;
+}
+
+.district-column {
+    width: 200px;
+    margin: 0;
+    padding: 0;
+}
+
+.district-column:nth-child(3),
+.district-column:nth-child(4) {
+    /*max-height: 215px;*/
+    margin-top: 90px;
+}
+
+.district-column:nth-child(5) {
+    /*max-height: 185px;*/
+    margin-top: 120px;
 }
 
 .district-content {
+    display: inline-block;
     margin: 0;
     padding: 0;
-    font-size: 12px;
-}
-
-.district-content:nth-child(3) {
-    margin-top: 85px;
-}
-
-.district-content:nth-child(4) {
-    margin-top: 95px;
-}
-
-.district-content:nth-child(5) {
-    margin-top: 120px;
+    font-size: 11px;
 }
 
 .district-icons-container {
@@ -160,7 +165,8 @@
 
 .district-icon {
     width: 16px;
-    height: auto;
+    height: 16px;
+    object-fit: contain;
 }
 
 .district-content p {
@@ -176,7 +182,6 @@
     padding: 2px 5px;
     font-size: 12px;
     font-weight: bold;
-    /*background-color: #f0f0f0;*/
 }
 
 .region-title {
