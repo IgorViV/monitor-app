@@ -363,7 +363,7 @@ export class EventManager {
             const contentDistricts = currentDistrictContainer.querySelectorAll('.district-content');
 
             let startIndex = 0;
-            let heightColumns = [310, 310, 215, 215, 185];
+            let heightColumns = [310, 310, 220, 220, 220];
             const tempContainer = document.createElement('div');
             tempContainer.classNmae = 'temp-container';
 
@@ -387,7 +387,7 @@ export class EventManager {
 
             // Генерируем PDF версию
             const mapContainer = document.querySelector('.map-container');
-            // await this.generatePDFReport(mapContainer); // TODO: закомментировано на время отладки соседнего кода
+            await this.generatePDFReport(mapContainer); // TODO: закомментировано на время отладки соседнего кода
 
             if (summaryHTML && reportContainer) {
                 // Удаляем старый summary-container если есть
