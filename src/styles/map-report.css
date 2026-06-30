@@ -28,7 +28,7 @@
 
 .map-header {
     width: 100%;
-    min-width: 1200px;
+    /*min-width: 1200px;*/
     margin-bottom: 5px;
 }
 
@@ -92,11 +92,11 @@
     padding: 0;
     font-style: italic;
     color: darkgray;
-    font-size: 0.75rem;
+    font-size: 11px;
 }
 
 .map-storm-legend {
-    width: 180px;
+    width: 215px;
     margin: 0;
     font-size: 11px;
 }
@@ -127,7 +127,7 @@
 .map-district-container {
     display: flex;
     align-items: flex-start;
-    gap: 5px;
+    gap: 2px;
     width: 297mm;
     height: 310px;
     margin: 0;
@@ -136,7 +136,7 @@
 }
 
 .district-column {
-    width: 210px;
+    width: 215px;
     margin: 0;
     padding: 0;
 }
