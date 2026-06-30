@@ -47,6 +47,7 @@ export class EventManager {
             btnMakeMonitor: document.getElementById('btn-make-monitor'),
             btnPreview: document.getElementById('btn-preview'),
             btnResetMonitor: document.getElementById('btn-reset-monitor'),
+            btnPdf: document.getElementById('btn-pdf'),
 
             // Кнопки очистки текстовых полей
             clearButtons: document.querySelectorAll('[data-clear-target]'),
@@ -86,7 +87,7 @@ export class EventManager {
 
     /**
      * Создаем страницу отчета Монитора
-     * @return {HTMLElement} - Страница отчета Монитора
+     * @return {HTMLElement} - Экземпляр шаблона Страницы отчета Монитора
      */
     createMapPage() {
         const templateMap = document.getElementById('template-map');
@@ -118,7 +119,8 @@ export class EventManager {
             'textareaFloodPrev',
             'btnMakeMonitor',
             'btnPreview',
-            'btnResetMonitor'
+            'btnResetMonitor',
+            'btnPdf',
         ];
 
         const missingElements = [];
@@ -168,6 +170,12 @@ export class EventManager {
         if (this.elements.btnPreview) {
             this.elements.btnPreview.addEventListener('click', () => {
                 this.handlePreview();
+            });
+        }
+
+        if (this.elements.btnPdf) {
+            this.elements.btnPdf.addEventListener('click', () => {
+                this.handleMakePdf();
             });
         }
 
@@ -282,7 +290,7 @@ export class EventManager {
     /**
      * Обработка создания монитора
      */
-    async handleMakeMonitor() {
+    handleMakeMonitor() {
         try {
             this.showLoading(true);
 
@@ -384,10 +392,10 @@ export class EventManager {
             currentDistrictContainer.innerHTML = tempContainer.innerHTML;
             tempContainer.remove();
             //
-
-            // Генерируем PDF версию
-            const mapContainer = document.querySelector('.map-container');
-            // await this.generatePDFReport(mapContainer); // TODO: закомментировано на время отладки соседнего кода
+            // Отображаем кнопку формирования Pdf
+            if (this.elements.btnPdf.classList.contains('visually-hidden')) {
+                this.elements.btnPdf.classList.remove('visually-hidden');
+            }
 
             if (summaryHTML && reportContainer) {
                 // Удаляем старый summary-container если есть
@@ -436,6 +444,16 @@ export class EventManager {
         } finally {
             this.showLoading(false);
         }
+    }
+
+    /**
+     * Обработка создания PDF отчета
+     * @return {Promise<void>}
+     */
+    async handleMakePdf() {
+        // Генерируем PDF версию
+        const mapContainer = document.querySelector('.map-container');
+        await this.generatePDFReport(mapContainer);
     }
 
     /**
@@ -713,6 +731,15 @@ export class EventManager {
         const reportContainer = document.getElementById('report-container');
         if (reportContainer) {
             reportContainer.innerHTML = '';
+        }
+        const mapContainer = document.querySelector('.map-container');
+        if (mapContainer) {
+            mapContainer.innerHTML = '';
+        }
+
+        // Скрываем кнопку формирования Pdf
+        if (!this.elements.btnPdf.classList.contains('visually-hidden')) {
+            this.elements.btnPdf.classList.add('visually-hidden');
         }
 
         // Сбрасываем приложение
