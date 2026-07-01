@@ -399,10 +399,10 @@ export class EventManager {
 
             if (summaryHTML && reportContainer) {
                 // Удаляем старый summary-container если есть
-                const oldSummary = document.getElementById('summary-container');
-                if (oldSummary) {
-                    oldSummary.remove();
-                }
+                // const oldSummary = document.getElementById('summary-container');
+                // if (oldSummary) {
+                //     oldSummary.remove();
+                // }
 
                 // Создаем новый summary-container
                 // const summaryContainer = this.createSummaryContainer(); // TODO: убрать после полной реализации pdf отчета
@@ -414,24 +414,6 @@ export class EventManager {
                 // } else {
                 //     reportContainer.appendChild(summaryContainer);
                 // }
-            }
-
-            // Скроллим к отчету
-            if (reportContainer && typeof reportContainer.scrollIntoView === 'function') {
-                setTimeout(() => {
-                    try {
-                        reportContainer.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start',
-                            inline: 'nearest'
-                        });
-                        if (typeof window.scrollBy === 'function') {
-                            window.scrollBy(0, -20);
-                        }
-                    } catch (scrollError) {
-                        console.debug('Scroll failed:', scrollError);
-                    }
-                }, 100);
             }
 
             this.saveToLocalStorage();
@@ -461,6 +443,7 @@ export class EventManager {
      */
     async generatePDFReport(mapPage) {
         try {
+            this.showLoading(true);
             // Создаем временный контейнер для PDF версии
             // const pdfContainer = document.createElement('div');
             // pdfContainer.id = 'pdf-container';
@@ -489,6 +472,8 @@ export class EventManager {
         } catch (error) {
             console.error('Error generating PDF:', error);
             this.showNotification('Ошибка при создании PDF', 'danger');
+        } finally {
+            this.showLoading(false);
         }
     }
 
