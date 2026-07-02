@@ -416,6 +416,23 @@ export class EventManager {
                 // }
             }
 
+            if (mapMainContainer && typeof mapMainContainer.scrollIntoView === 'function') {
+                setTimeout(() => {
+                    try {
+                        mapMainContainer.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                            inline: 'nearest'
+                        });
+                        if (typeof window.scrollBy === 'function') {
+                            // window.scrollBy(0, -20);
+                        }
+                    } catch (scrollError) {
+                        console.debug('Scroll failed:', scrollError);
+                    }
+                }, 100);
+            }
+
             this.saveToLocalStorage();
             this.showNotification('Монитор успешно подготовлен', 'success');
 
