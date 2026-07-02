@@ -397,12 +397,12 @@ export class EventManager {
                 this.elements.btnPdf.classList.remove('visually-hidden');
             }
 
-            if (summaryHTML && reportContainer) {
+            // if (summaryHTML && reportContainer) {
                 // Удаляем старый summary-container если есть
-                const oldSummary = document.getElementById('summary-container');
-                if (oldSummary) {
-                    oldSummary.remove();
-                }
+                // const oldSummary = document.getElementById('summary-container');
+                // if (oldSummary) {
+                //     oldSummary.remove();
+                // }
 
                 // Создаем новый summary-container
                 // const summaryContainer = this.createSummaryContainer(); // TODO: убрать после полной реализации pdf отчета
@@ -414,25 +414,7 @@ export class EventManager {
                 // } else {
                 //     reportContainer.appendChild(summaryContainer);
                 // }
-            }
-
-            // Скроллим к отчету
-            if (reportContainer && typeof reportContainer.scrollIntoView === 'function') {
-                setTimeout(() => {
-                    try {
-                        reportContainer.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start',
-                            inline: 'nearest'
-                        });
-                        if (typeof window.scrollBy === 'function') {
-                            window.scrollBy(0, -20);
-                        }
-                    } catch (scrollError) {
-                        console.debug('Scroll failed:', scrollError);
-                    }
-                }, 100);
-            }
+            // }
 
             this.saveToLocalStorage();
             this.showNotification('Монитор успешно подготовлен', 'success');
@@ -451,9 +433,15 @@ export class EventManager {
      * @return {Promise<void>}
      */
     async handleMakePdf() {
-        // Генерируем PDF версию
-        const mapContainer = document.querySelector('.map-container');
-        await this.generatePDFReport(mapContainer);
+        try {
+            // Генерируем PDF версию
+            const mapContainer = document.querySelector('.map-container');
+            await this.generatePDFReport(mapContainer);
+        } catch (error) {
+            console.error('Error generating PDF monitor:', error);
+            console.error('Stack:', error.stack);
+            this.showNotification('Произошла ошибка при подготовке PDF файла', 'danger');
+        }
     }
 
     /**
@@ -461,6 +449,7 @@ export class EventManager {
      */
     async generatePDFReport(mapPage) {
         try {
+            this.showLoading(true);
             // Создаем временный контейнер для PDF версии
             // const pdfContainer = document.createElement('div');
             // pdfContainer.id = 'pdf-container';
@@ -477,7 +466,7 @@ export class EventManager {
             // pdfContainer.innerHTML = printableHTML;
 
             // Ждем загрузки изображений
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // await new Promise(resolve => setTimeout(resolve, 500));
 
             // Экспортируем в PDF
             await exportToPDF(mapPage, `Монитор паводковой и пожарной обстановки на 06-00 ${this.formatDate(this.elements.nextDate?.value) || 'report'}.pdf`);
@@ -489,6 +478,8 @@ export class EventManager {
         } catch (error) {
             console.error('Error generating PDF:', error);
             this.showNotification('Ошибка при создании PDF', 'danger');
+        } finally {
+            this.showLoading(false);
         }
     }
 
