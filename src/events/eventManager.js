@@ -414,7 +414,24 @@ export class EventManager {
                 // } else {
                 //     reportContainer.appendChild(summaryContainer);
                 // }
-            // }
+            //}
+
+            if (mapMainContainer && typeof mapMainContainer.scrollIntoView === 'function') {
+                setTimeout(() => {
+                    try {
+                        mapMainContainer.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                            inline: 'nearest'
+                        });
+                        if (typeof window.scrollBy === 'function') {
+                            // window.scrollBy(0, -20);
+                        }
+                    } catch (scrollError) {
+                        console.debug('Scroll failed:', scrollError);
+                    }
+                }, 100);
+            }
 
             this.saveToLocalStorage();
             this.showNotification('Монитор успешно подготовлен', 'success');
@@ -449,21 +466,7 @@ export class EventManager {
      */
     async generatePDFReport(mapPage) {
         try {
-            this.showLoading(true);
-            // Создаем временный контейнер для PDF версии
-            // const pdfContainer = document.createElement('div');
-            // pdfContainer.id = 'pdf-container';
-            // pdfContainer.style.cssText = 'width: 297mm; height: 210mm;';
-            // pdfContainer.appendChild(mapPage);
-            // document.body.appendChild(pdfContainer);
-
-            // Генерируем HTML
-            // const printableHTML = generatePrintableHTML(
-            //     this.app,
-            //     this.elements.nextDate?.value,
-            //     this.elements.prevDate?.value
-            // );
-            // pdfContainer.innerHTML = printableHTML;
+            this.showLoading(true, true);
 
             // Ждем загрузки изображений
             // await new Promise(resolve => setTimeout(resolve, 500));
@@ -471,15 +474,13 @@ export class EventManager {
             // Экспортируем в PDF
             await exportToPDF(mapPage, `Монитор паводковой и пожарной обстановки на 06-00 ${this.formatDate(this.elements.nextDate?.value) || 'report'}.pdf`);
 
-            // Удаляем временный контейнер
-            // document.body.removeChild(pdfContainer);
-
             this.showNotification('PDF отчет сгенерирован', 'success');
+            this.showNotification('Файл отчета находится в Загрузках', 'success');
         } catch (error) {
             console.error('Error generating PDF:', error);
             this.showNotification('Ошибка при создании PDF', 'danger');
         } finally {
-            this.showLoading(false);
+            this.showLoading(false, false);
         }
     }
 
@@ -1118,8 +1119,12 @@ export class EventManager {
     /**
      * Показывает/скрывает индикатор загрузки
      */
-    showLoading(show) {
+    showLoading(show, isPdf = false) {
         let spinner = document.querySelector('.spinner-overlay');
+        let spinnerText = '<div class="spinner-text mt-2">Подготовка монитора...</div>'
+        if (isPdf) {
+            spinnerText = '<div class="spinner-text mt-2">Подготовка pdf файла монитора...</div>';
+        }
 
         if (show && !spinner) {
             spinner = document.createElement('div');
@@ -1129,7 +1134,7 @@ export class EventManager {
           <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Загрузка...</span>
           </div>
-          <div class="spinner-text mt-2">Подготовка монитора...</div>
+          ${spinnerText}
         </div>
       `;
             document.body.appendChild(spinner);
