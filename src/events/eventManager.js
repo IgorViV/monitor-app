@@ -372,11 +372,12 @@ export class EventManager {
 
             let startIndex = 0;
             let heightColumns = [310, 310, 220, 220, 220];
+            const maxHeight = Math.max(...heightColumns);
             const tempContainer = document.createElement('div');
             tempContainer.classNmae = 'temp-container';
-
+            let freeHeightColumn = maxHeight;
             for (let i = 0; i < heightColumns.length; i++) {
-                let freeHeightColumn = heightColumns[i];
+                freeHeightColumn = heightColumns[i];
                 const districtColumn = document.createElement('div');
                 districtColumn.className = 'district-column';
                 for (let j = startIndex; j < contentDistricts.length; j++) {

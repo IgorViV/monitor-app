@@ -48,10 +48,13 @@
 .map-title p, .map-title h1 {
     margin: 0;
     padding: 0;
+    font-size: 14px;
 }
 
 .map-title h1 {
-    font-weight: bold;
+    /*font-weight: bold;*/
+    font-family: 'PFDinMedium', sans-serif;
+    font-size: 16px;
 }
 
 .map-main-container {
@@ -156,7 +159,8 @@
     display: inline-block;
     margin: 0;
     padding: 0;
-    font-size: 11px;
+    font-size: 10px;
+    line-height: 1.1;
 }
 
 .district-icons-container {
@@ -181,12 +185,14 @@
     margin: 0 0 2px 0;
     padding: 2px 5px;
     font-size: 11px;
-    font-weight: bold;
+    /*font-weight: bold;*/
+    font-family: 'PFDinMedium', sans-serif;
 }
 
 .region-title {
     margin: 2px 0;
     padding: 0;
-    font-size: 11px;
-    font-weight: bold;
+    font-size: 10px;
+    /*font-weight: bold;*/
+    font-family: 'PFDinMedium', sans-serif;
 }

@@ -21,6 +21,7 @@
   "dependencies": {
     "bootstrap": "^5.3.8",
     "html2canvas": "^1.4.1",
-    "jspdf": "^4.2.1"
+    "jspdf": "^4.2.1",
+    "tauri-plugin-system-fonts-api": "^2.0.2"
   }
 }

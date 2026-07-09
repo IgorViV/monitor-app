@@ -45,7 +45,7 @@ export function parseFloodLine(line) {
         let minVoltage = Infinity;
         let maxVoltage = 0;
         // let voltageUnit = '\U+00A0кВ';
-        let voltageUnit = ' кВ';
+        let voltageUnit = 'кВ';
         let totalSubstations = 0;
 
         detailParts.forEach(part => {

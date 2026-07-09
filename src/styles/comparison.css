@@ -2,13 +2,15 @@
 .text-increase,
 .comparison-increase {
     color: var(--increase-color) !important;
-    font-weight: 600;
+    /*font-weight: 600;*/
+    font-family: 'PFDinMedium', sans-serif;
 }
 
 .text-decrease,
 .comparison-decrease {
     color: var(--decrease-color) !important;
-    font-weight: 600;
+    /*font-weight: 600;*/
+    font-family: 'PFDinMedium', sans-serif;
 }
 
 .text-unchanged,
@@ -19,7 +21,8 @@
 .text-new,
 .comparison-new {
     color: var(--increase-color) !important;
-    font-weight: 700;
+    /*font-weight: 700;*/
+    font-family: 'PFDinMedium', sans-serif;
     background-color: rgba(220, 53, 69, 0.1);
     padding: 2px 6px;
     border-radius: 4px;

@@ -69,7 +69,8 @@
 
     .text-increase,
     .text-decrease {
-        font-weight: bold;
+        /*font-weight: bold;*/
+        font-family: 'PFDinMedium', sans-serif;
     }
 
     .text-increase {

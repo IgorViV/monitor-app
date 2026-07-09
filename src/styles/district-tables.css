@@ -48,12 +48,12 @@
 .region-title {
     margin: 0;
     padding: 0;
-    font-size: 11px;
+    font-size: 10px;
 }
 
 /* Филиал (предприятие) */
 .region-filial {
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
 .region-filial:last-child {
@@ -61,11 +61,11 @@
 }
 
 .region-filial p:first-child {
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .region-filial p:last-child {
-    font-size: 11px;
+    font-size: 10px;
 }
 
 /* Цвета для значений */
