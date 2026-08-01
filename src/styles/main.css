@@ -3,7 +3,7 @@
     font-family: 'PFDin';
     font-style: normal;
     font-weight: 400;
-    src: url('fonts/PFDinTextCondPro Light.ttf') format('truetype');
+    src: url('/fonts/PFDinTextCondPro-Light.ttf') format('truetype');
 }
 
 /* Жирное начертание (Bold) */
@@ -11,7 +11,7 @@
     font-family: 'PFDinMedium';
     font-style: normal;
     font-weight: 400;
-    src: url('fonts/PFDinTextCondPro Medium.ttf') format('truetype');
+    src: url('/fonts/PFDinTextCondPro-Medium.ttf') format('truetype');
 }
 
 :root {
@@ -58,7 +58,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Заголовок */
 #page-title {
     color: #2c3e50;
-    /*text-transform: uppercase;*/
+    text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
