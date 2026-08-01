@@ -3,15 +3,15 @@
     font-family: 'PFDin';
     font-style: normal;
     font-weight: 400;
-    src: url('public/fonts/PFDinTextCondPro Light.ttf') format('truetype');
+    src: url('fonts/PFDinTextCondPro Light.ttf') format('truetype');
 }
 
 /* Жирное начертание (Bold) */
 @font-face {
-    font-family: 'PFDin';
+    font-family: 'PFDinMedium';
     font-style: normal;
-    font-weight: 600;
-    src: url('public/fonts/PFDinTextCondPro Medium.ttf') format('truetype');
+    font-weight: 400;
+    src: url('fonts/PFDinTextCondPro Medium.ttf') format('truetype');
 }
 
 :root {
@@ -33,8 +33,9 @@ body {
     background-color: #f8f9fa;
 }
 
-h1, h2, h3, h4, h5, h6, p {
+h1, h2, h3, h4, h5, h6 {
     font-family: 'PFDin', sans-serif;
+    font-weight: 400;
 }
 
 /* Стили для плейсхолдеров */

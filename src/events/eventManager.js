@@ -371,12 +371,15 @@ export class EventManager {
             const contentDistricts = currentDistrictContainer.querySelectorAll('.district-content');
 
             let startIndex = 0;
+            // let heightColumns = [310, 310, 215, 215, 185];
             let heightColumns = [310, 310, 215, 215, 185];
+            const sumAllHeightColumns = heightColumns.reduce((acc, current) => acc + current, 0);
+            // console.log('SUM: ', sumAllHeightColumns); // TODO: remove
             const tempContainer = document.createElement('div');
             tempContainer.classNmae = 'temp-container';
-
+            let freeHeightColumn = Math.max(...heightColumns);
             for (let i = 0; i < heightColumns.length; i++) {
-                let freeHeightColumn = heightColumns[i];
+                freeHeightColumn = heightColumns[i];
                 const districtColumn = document.createElement('div');
                 districtColumn.className = 'district-column';
                 for (let j = startIndex; j < contentDistricts.length; j++) {
@@ -389,6 +392,7 @@ export class EventManager {
                 }
                 tempContainer.appendChild(districtColumn);
             }
+
             currentDistrictContainer.innerHTML = tempContainer.innerHTML;
             tempContainer.remove();
             //
