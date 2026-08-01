@@ -4,7 +4,6 @@
     height: 210mm;
     margin: 0 auto;
     padding: 70px 5px 5px 5px;
-    color: #000;
 }
 
 .map-svg {
@@ -24,11 +23,12 @@
     height: 210mm;
     margin: 0;
     padding: 0;
+    /*background-color: rgba(255, 255, 255, 0.2);*/
 }
 
 .map-header {
     width: 100%;
-    /*min-width: 1200px;*/
+    min-width: 1200px;
     margin-bottom: 5px;
 }
 
@@ -48,14 +48,10 @@
 .map-title p, .map-title h1 {
     margin: 0;
     padding: 0;
-    font-size: 14px;
 }
 
 .map-title h1 {
-    /*font-weight: bold;*/
-    font-family: 'PFDinMedium', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
+    font-weight: bold;
 }
 
 .map-main-container {
@@ -96,11 +92,11 @@
     padding: 0;
     font-style: italic;
     color: darkgray;
-    font-size: 11px;
+    font-size: 0.75rem;
 }
 
 .map-storm-legend {
-    width: 215px;
+    width: 180px;
     margin: 0;
     font-size: 11px;
 }
@@ -131,7 +127,7 @@
 .map-district-container {
     display: flex;
     align-items: flex-start;
-    gap: 2px;
+    gap: 5px;
     width: 297mm;
     height: 310px;
     margin: 0;
@@ -140,7 +136,7 @@
 }
 
 .district-column {
-    width: 215px;
+    width: 210px;
     margin: 0;
     padding: 0;
 }
@@ -156,16 +152,25 @@
     margin-top: 120px;
 }
 
+/* Контейнер федерального округа */
 .district-content {
     display: inline-block;
+    width: 210px;
     margin: 0;
     padding: 0;
-    font-size: 10px;
-    line-height: 1.1;
+    font-size: 11px;
 }
 
+.district-content p {
+    margin: 0;
+    padding: 0;
+}
+
+/* Контейнер иконок */
 .district-icons-container {
     display: flex;
+    gap: 1px;
+    align-items: center;
 }
 
 .district-icon {
@@ -174,26 +179,75 @@
     object-fit: contain;
 }
 
-.district-content p {
+.district-icon.visually-hidden {
+    opacity: 0;
+    width: 0;
     margin: 0;
-    padding: 0;
 }
 
+/* Заголовок федерального округа */
 .district-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin: 0 0 2px 0;
     padding: 2px 5px;
-    font-size: 11px;
-    /*font-weight: bold;*/
     font-family: 'PFDinMedium', sans-serif;
+    font-size: 11px;
 }
+
+.district-title span {
+    padding-top: 2px;
+}
+
+/* Регион */
+.district-region {
+    padding: 2px;
+}
+
+/*.district-region:last-child {
+    border-bottom: none;
+}*/
 
 .region-title {
     margin: 2px 0;
     padding: 0;
-    font-size: 10px;
-    /*font-weight: bold;*/
     font-family: 'PFDinMedium', sans-serif;
+    font-size: 11px;
+}
+
+/* Филиал (предприятие) */
+.region-filial {
+    margin-bottom: 2px;
+    line-height: 1.1;
+}
+
+.region-filial:last-child {
+    margin-bottom: 0;
+}
+
+.region-filial p:first-child {
+    margin-top: 3px;
+    font-size: 11px;
+}
+
+.region-filial p:last-child {
+    font-size: 11px;
+}
+
+/* Цвета для значений */
+.color-red {
+    color: #dc3545 !important;
+}
+
+.color-green {
+    color: #198754 !important;
+}
+
+.color-black {
+    color: #212529 !important;
+}
+
+.color-grey {
+    color: #6c757d !important;
 }
