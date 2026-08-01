@@ -149,9 +149,11 @@ function parseStormLine(line) {
     // Убираем дату и дефис в строке
     let regionData = [];
     const cleanLine = line.replace(/^\s*[\u2010\u2011\u2012\u2013\u2014\u2015-]\s*/, '')
-        .replace(/\d+(-\d+)?\s+(апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря|января|февраля|марта)\s+/ig, '')
-        .replace(/\d+(-\d+)?\s+в\s+/, '')
-        .trim();
+      .replace(/\d+(\s+(апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря|января|февраля|марта))?(-\d+)?\s+(апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря|января|февраля|марта)\s+/ig, '')
+      .replace(/\d+(-\d+)?\s+в\s+/, '')
+      .replace(/\n/, '')
+      .trim();
+
     const regionName = extractRegionName(cleanLine);
     if (!regionName.length) {
         return null;

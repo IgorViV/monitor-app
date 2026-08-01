@@ -606,5 +606,3 @@ export const FEDERAL_DISTRICTS_ORDER = [
     'Сибирский ФО',
     'Дальневосточный ФО',
 ];
-
-
