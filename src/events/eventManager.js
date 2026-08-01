@@ -390,6 +390,7 @@ export class EventManager {
                 }
                 tempContainer.appendChild(districtColumn);
             }
+
             currentDistrictContainer.innerHTML = tempContainer.innerHTML;
             tempContainer.remove();
             //
