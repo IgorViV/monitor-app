@@ -154,7 +154,6 @@ function parseStormLine(line) {
       .replace(/\n/, '')
       .trim();
 
-    console.log('CLEAN LINE:', cleanLine); // TODO: remove
     const regionName = extractRegionName(cleanLine);
     if (!regionName.length) {
         return null;
