@@ -48,7 +48,7 @@
 .map-title p, .map-title h1 {
     margin: 0;
     padding: 0;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .map-title h1 {
@@ -81,6 +81,7 @@
 
 .summary-text {
     max-width: 860px;
+    line-height: 1.2;
 }
 
 .summary-footnote {
@@ -94,7 +95,7 @@
     padding: 0;
     font-style: italic;
     color: darkgray;
-    font-size: 0.75rem;
+    font-size: 12px;
 }
 
 .map-storm-legend {
@@ -194,18 +195,18 @@
     justify-content: space-between;
     align-items: center;
     margin: 0 0 2px 0;
-    padding: 2px 5px;
+    padding: 2px;
     font-family: 'PFDinMedium', sans-serif;
     font-size: 11px;
 }
 
 .district-title span {
-    padding-top: 2px;
+    /*padding-top: 2px;*/
 }
 
 /* Регион */
 .district-region {
-    padding: 2px;
+    padding: 0 2px 2px 2px;
 }
 
 /*.district-region:last-child {
@@ -213,10 +214,10 @@
 }*/
 
 .region-title {
-    margin: 2px 0;
+    margin: 2px 0 0 0;
     padding: 0;
     font-family: 'PFDinMedium', sans-serif;
-    font-size: 10px;
+    font-size: 11px;
 }
 
 /* Филиал (предприятие) */
